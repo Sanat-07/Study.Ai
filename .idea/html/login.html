@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Back - AI StudyBook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif']},colors:{slate:{950:'#020617'}},animation:{'pulse-slow':'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite','float':'float 6s ease-in-out infinite','shine':'shine 1s linear infinite','spin-slow':'spin 12s linear infinite','fade-in-up':'fade-in-up 0.8s ease-out forwards'},keyframes:{float:{'0%, 100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-20px)'}},shine:{'0%':{transform:'translateX(-100%)'},'100%':{transform:'translateX(100%)'}},  'fade-in-up':{'0%':{opacity:'0',transform:'translateY(20px)'},'100%':{opacity:'1',transform:'translateY(0)'}}}}}}</script>
+</head>
+
+<body class="bg-slate-950 text-white antialiased min-h-screen flex items-center justify-center p-6"><nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-sm border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2">
+            <div
+                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                    </path>
+                </svg>
+            </div>
+            <span class="font-bold">AI StudyBook</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="text-sm text-gray-400 hover:text-white transition-colors">Features</a>
+            <a href="pricing.html" class="text-sm text-gray-400 hover:text-white transition-colors">Pricing</a>
+            <a href="index.html#about" class="text-sm text-gray-400 hover:text-white transition-colors">About Us</a>
+            <a href="index.html#contact"
+               class="text-sm text-gray-400 hover:text-white transition-colors">Contact</a>
+            <a href="register.html"
+               class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors">Sign
+                Up</a>
+        </div>
+    </div>
+</nav><div class="w-full max-w-md">
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold mb-2">Welcome Back</h1>
+        <p class="text-gray-400">Sign in to continue your learning journey</p>
+    </div>
+
+    <div
+            class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <form id="login-form" class="space-y-5"><div class="form-field" style="animation-delay: 0.1s;">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+            <div class="relative">
+                <div
+                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-300 input-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                <input type="email" id="email" placeholder="you@example.com" required
+                       class="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+            </div>
+        </div><div class="form-field" style="animation-delay: 0.2s;">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+            <div class="relative">
+                <div
+                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-300 input-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                        </path>
+                    </svg>
+                </div>
+                <input type="password" id="password" placeholder="••••••••" required
+                       class="w-full pl-11 pr-12 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                <button type="button" onclick="togglePassword()"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div><div class="flex items-center justify-between form-field" style="animation-delay: 0.3s;">
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="remember"
+                       class="w-4 h-4 rounded border-gray-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900">
+                <span class="text-sm text-gray-400">Remember me</span>
+            </label>
+            <a href="#" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">Forgot password?</a>
+        </div><button type="submit"
+                      class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold rounded-lg shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2 form-field"
+                      style="animation-delay: 0.4s;">
+            Sign In
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+        </button>
+        </form><div class="relative my-6">
+        <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-700"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+            <span class="px-4 bg-slate-900/50 text-gray-400">or continue with</span>
+        </div>
+    </div><div class="space-y-3">
+        <button type="button"
+                class="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
+            <svg class="w-5 h-5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                        d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z"
+                        fill="#4285F4" />
+                <path
+                        d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z"
+                        fill="#34A853" />
+                <path
+                        d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z"
+                        fill="#FBBC05" />
+                <path
+                        d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z"
+                        fill="#EA4335" />
+            </svg>
+            Continue with Google
+        </button>
+        <button type="button"
+                class="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            Continue with GitHub
+        </button>
+    </div><div class="mt-6 text-center text-sm text-gray-400">
+        Don't have an account? <a href="register.html"
+                                  class="text-blue-400 hover:text-blue-300 font-medium transition-colors">Sign up</a>
+    </div>
+    </div><div class="mt-6 text-center text-xs text-gray-500">
+    By continuing, you agree to our <a href="#" class="text-gray-400 hover:text-gray-300">Terms</a> and <a
+        href="#" class="text-gray-400 hover:text-gray-300">Privacy Policy</a>
+</div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+    // Toggle password visibility
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    }
+
+    // Icon color change on focus
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('focus', function () {
+            const icon = this.parentElement.querySelector('.input-icon');
+            if (icon) {
+                icon.classList.remove('text-gray-400');
+                icon.classList.add('text-blue-500');
+            }
+        });
+        input.addEventListener('blur', function () {
+            const icon = this.parentElement.querySelector('.input-icon');
+            if (icon) {
+                icon.classList.remove('text-blue-500');
+                icon.classList.add('text-gray-400');
+            }
+        });
+    });
+
+    // Form submission
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const result = Auth.login(email, password);
+        if (result.success) {
+            window.location.href = 'dashboard.html';
+        } else {
+            alert(result.message);
+        }
+    });
+
+    // Form field animations
+    const style = document.createElement('style');
+    style.textContent = `
+            .form-field {
+                animation: slideInUp 0.5s ease-out forwards;
+                opacity: 0;
+            }
+            @keyframes slideInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+    document.head.appendChild(style);
+</script>
+</body>
+
+</html>
