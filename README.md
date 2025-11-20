@@ -122,53 +122,6 @@ Study.Ai/
 └── package.json           # Dependencies
 ```
 
-## 🎨 Key Features Implementation
-
-### Smooth Scrolling
-Navigation links use smooth scroll behavior for better UX:
-```typescript
-const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-  e.preventDefault();
-  const element = document.getElementById(id);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
-  }
-};
-```
-
-### Navbar Scroll Effect
-Dynamic navbar that changes opacity on scroll:
-```typescript
-const [isScrolled, setIsScrolled] = useState(false);
-
-useEffect(() => {
-  const handleScroll = () => {
-    setIsScrolled(window.scrollY > 50);
-  };
-  window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []);
-```
-
-### Scroll Animations
-Elements fade in as they enter the viewport using IntersectionObserver:
-```typescript
-useEffect(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-  document.querySelectorAll('.scroll-animate').forEach(el => {
-    observer.observe(el);
-  });
-
-  return () => observer.disconnect();
-}, []);
-```
 
 ## 🔧 Available Scripts
 
@@ -215,6 +168,7 @@ useEffect(() => {
 
 - **Sanat Bogenbaev** - CEO, Co-founder
 - **Oralxhan Seilxhan** - CTO, Co-founder
+- **We need a LLM Engineer aaaaaaaa**
 
 ## 📄 License
 
@@ -232,5 +186,5 @@ This is a private project. For collaboration inquiries, please contact the team.
 ---
 
 <div align="center">
-  <strong>Built with ❤️ by the AI StudyBook Team</strong>
+  <strong>Built with ❤️ by the AI Study Team</strong>
 </div>
