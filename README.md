@@ -168,7 +168,7 @@ Study.Ai/
 
 - **Sanat Bogenbaev** - CEO, Co-founder
 - **Oralxhan Seilxhan** - CTO, Co-founder
-- **We need a LLM Engineer aaaaaaaa**
+- **We need a ML Engineer aaaaaaaa**
 
 ## 📄 License
 
