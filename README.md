@@ -181,6 +181,8 @@ This is a private project. For collaboration inquiries, please contact the team.
 ## 📞 Contact
 
 - **GitHub**: [@Sanat-07](https://github.com/Sanat-07)
+_ **GitHub**: [@Oralxhan](https://github.com/Oralxhan-code)
+- **Telegram**: [Sanat]()
 - **Email**: bgenbaevsanat@gmail.com
 
 ---
