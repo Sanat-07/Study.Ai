@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Github } from 'lucide-react';
+import {login} from "@/shared/api/endpoints/auth.api.ts";
+import {setAuthToken} from "@/shared/api/axiosInstance.ts";
+import Cookies from "js-cookie";
 
 export function LoginPage() {
     const navigate = useNavigate();
@@ -10,9 +13,15 @@ export function LoginPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock login - in a real app this would call an API
-        console.log('Logging in with:', email, password);
-        navigate('/dashboard');
+        login({email: email, password: password}).then(response => {
+            if(response) {
+                const { accessToken } = response;
+                setAuthToken(accessToken);
+                Cookies.set('token', accessToken);
+                console.log('Logging in with:', email, password);
+                navigate('/dashboard');
+            }
+        })
     };
 
     return (
