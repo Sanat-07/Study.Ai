@@ -362,17 +362,14 @@ This project is **private and proprietary**. All rights reserved.
 
 ---
 
-## 📞 Contact & Support
+## 📞 Contact
 
 <div align="center">
 
-### Get in Touch
-
-**Email**: [bgenbaevsanat@gmail.com](mailto:bgenbaevsanat@gmail.com)
-
-**GitHub**: [@Sanat-07](https://github.com/Sanat-07)
-
-**Project Repository**: [Study.Ai](https://github.com/Sanat-07/Study.Ai)
+[![Email](https://img.shields.io/badge/EMAIL-bgenbaevsanat@gmail.com-gray?style=for-the-badge&logo=gmail)](mailto:bgenbaevsanat@gmail.com)
+[![Support](https://img.shields.io/badge/SUPPORT-bgenbaevsanat@gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:bgenbaevsanat@gmail.com)
+[![Website](https://img.shields.io/badge/WEBSITE-Study.Ai-gray?style=for-the-badge&logo=google-chrome&logoColor=white)](https://github.com/Sanat-07/Study.Ai)
+[![GitHub](https://img.shields.io/badge/GITHUB-Sanat--07/Study.Ai-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sanat-07/Study.Ai)
 
 ---
 
