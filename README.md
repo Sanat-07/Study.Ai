@@ -354,7 +354,7 @@ If you're part of the development team:
 
 ---
 
-## 📄 License
+## 📄  License
 
 This project is **private and proprietary**. All rights reserved.
 
@@ -362,7 +362,7 @@ This project is **private and proprietary**. All rights reserved.
 
 ---
 
-## 📞 Contact
+## 📞  Contact
 
 <div align="center">
 
