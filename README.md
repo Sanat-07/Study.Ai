@@ -358,7 +358,6 @@ If you're part of the development team:
 
 This project is **private and proprietary**. All rights reserved.
 
-© 2025 AI StudyBook. Unauthorized copying, distribution, or use is strictly prohibited.
 
 ---
 
@@ -384,5 +383,7 @@ This project is **private and proprietary**. All rights reserved.
 **Built with ❤️ by the AI StudyBook Team**
 
 *Empowering learners worldwide through intelligent technology*
+
+© 2025 AI StudyBook. Unauthorized copying, distribution, or use is strictly prohibited.
 
 </div>
