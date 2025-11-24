@@ -3,7 +3,13 @@ export interface LoginCredentials {
     password: string;
 }
 
-export interface LoginResponse {
+export interface SignUpCredentials {
+    email: string;
+    fullName: string;
+    password: string;
+}
+
+export interface TokenResponse {
     accessToken: string;
     refreshToken: string;
     message?: string;
@@ -15,21 +21,9 @@ export class ApiError {
 
 export interface User {
     id: string;
-    phone: string;
-    name?: string;
-    email?: string;
-    balance?: number;
-    avatarId?: string | null;
+    fullName: string;
+    email: string;
 }
-
-export interface Sender {
-    senderName: string;
-    senderPhone: string;
-    totalAmount: number;
-    totalCount: number;
-}
-
-
 
 
 export interface UserSettings {
@@ -39,6 +33,6 @@ export interface UserSettings {
     notificationsEnabled: boolean;
 }
 
-export interface GoogleLoginResponse extends LoginResponse {}
+export interface GoogleLoginResponse extends TokenResponse {}
 
-export interface PhoneLoginResponse extends LoginResponse {}
+export interface PhoneLoginResponse extends TokenResponse {}

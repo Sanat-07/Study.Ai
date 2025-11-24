@@ -1,24 +1,26 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Github } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Github } from 'lucide-react';
+import {login} from "@/shared/api/endpoints/auth.api.ts";
+import {setAuthToken} from "@/shared/api/axiosInstance.ts";
+import Cookies from "js-cookie";
 
-export function RegisterPage() {
+export function LoginPage() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
-    const [fullname, setFullname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [agreed, setAgreed] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!agreed) {
-            alert('Please agree to the Terms of Service and Privacy Policy');
-            return;
-        }
-        // Mock register
-        console.log('Registering with:', fullname, email, password);
-        navigate('/dashboard');
+        login({email: email, password: password}).then(response => {
+            if(response) {
+                const { accessToken } = response;
+                setAuthToken(accessToken);
+                Cookies.set('token', accessToken);
+                navigate('/dashboard');
+            }
+        })
     };
 
     return (
@@ -39,36 +41,19 @@ export function RegisterPage() {
                         <Link to="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">Pricing</Link>
                         <Link to="/#about" className="text-sm text-gray-400 hover:text-white transition-colors">About Us</Link>
                         <Link to="/#contact" className="text-sm text-gray-400 hover:text-white transition-colors">Contact</Link>
-                        <Link to="/login" className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium transition-colors">Log In</Link>
+                        <Link to="/register" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors">Sign Up</Link>
                     </div>
                 </div>
             </nav>
 
             <div className="w-full max-w-md mt-16">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold mb-2">Create Account</h1>
-                    <p className="text-gray-400">Start your learning journey today</p>
+                    <h1 className="text-4xl font-bold mb-2">Welcome Back</h1>
+                    <p className="text-gray-400">Sign in to continue your learning journey</p>
                 </div>
 
                 <div className="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-300">Full Name</label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                                    <User className="w-5 h-5" />
-                                </div>
-                                <input
-                                    type="text"
-                                    required
-                                    value={fullname}
-                                    onChange={(e) => setFullname(e.target.value)}
-                                    placeholder="John Doe"
-                                    className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                                />
-                            </div>
-                        </div>
-
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-gray-300">Email</label>
                             <div className="relative">
@@ -110,24 +95,19 @@ export function RegisterPage() {
                             </div>
                         </div>
 
-                        <div className="flex items-start gap-2">
-                            <input
-                                type="checkbox"
-                                required
-                                checked={agreed}
-                                onChange={(e) => setAgreed(e.target.checked)}
-                                className="mt-1 w-4 h-4 rounded border-gray-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900"
-                            />
-                            <span className="text-sm text-gray-400">
-                                I agree to the <a href="#" className="text-blue-400 hover:text-blue-300">Terms of Service</a> and <a href="#" className="text-blue-400 hover:text-blue-300">Privacy Policy</a>
-                            </span>
+                        <div className="flex items-center justify-between">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" className="w-4 h-4 rounded border-gray-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900" />
+                                <span className="text-sm text-gray-400">Remember me</span>
+                            </label>
+                            <a href="#" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">Forgot password?</a>
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-500 hover:via-blue-500 hover:to-cyan-500 text-white font-semibold rounded-lg shadow-lg shadow-purple-600/30 hover:shadow-purple-600/50 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold rounded-lg shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2"
                         >
-                            Create Account
+                            Sign In
                             <ArrowRight className="w-5 h-5" />
                         </button>
                     </form>
@@ -149,22 +129,21 @@ export function RegisterPage() {
                                 <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05" />
                                 <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335" />
                             </svg>
-                            Sign up with Google
+                            Continue with Google
                         </button>
                         <button type="button" className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
                             <Github className="w-5 h-5" />
-                            Sign up with GitHub
+                            Continue with GitHub
                         </button>
                     </div>
 
                     <div className="mt-6 text-center text-sm text-gray-400">
-                        Already have an account? <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">Sign in</Link>
+                        Don't have an account? <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">Sign up</Link>
                     </div>
                 </div>
 
-                <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                    Secure SSL encrypted connection
+                <div className="mt-6 text-center text-xs text-gray-500">
+                    By continuing, you agree to our <a href="#" className="text-gray-400 hover:text-gray-300">Terms</a> and <a href="#" className="text-gray-400 hover:text-gray-300">Privacy Policy</a>
                 </div>
             </div>
         </div>

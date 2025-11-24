@@ -14,8 +14,8 @@ import { MindMapPage } from './pages/MindMapPage';
 import { TutorPage } from './pages/TutorPage';
 import { ReaderPage } from './pages/ReaderPage';
 import { LandingPage } from './pages/LandingPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
+import { LoginPage } from './pages/auth/LoginPage.tsx';
+import { RegisterPage } from './pages/auth/RegisterPage.tsx';
 import { PricingPage } from './pages/PricingPage';
 
 function AppContent() {

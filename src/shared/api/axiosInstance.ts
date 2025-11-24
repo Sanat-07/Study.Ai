@@ -2,13 +2,14 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import errorHandler from '../util/errorHandler';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/';
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: true
 });
 
 axiosInstance.interceptors.request.use(

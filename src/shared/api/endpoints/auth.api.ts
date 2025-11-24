@@ -1,12 +1,23 @@
 import Cookies from 'js-cookie';
-import { GoogleLoginResponse, LoginCredentials, LoginResponse, PhoneLoginResponse } from '../../types/auth';
+import {
+    GoogleLoginResponse,
+    LoginCredentials,
+    PhoneLoginResponse, SignUpCredentials,
+    TokenResponse
+} from '../../types/auth';
 import { setAuthToken } from '../axiosInstance';
 import { httpClient } from '../client';
 
 export const login = async (
     credentials: LoginCredentials
-): Promise<LoginResponse> => {
-    return await httpClient.post<LoginResponse>('/auth/login', credentials);
+): Promise<TokenResponse> => {
+    return await httpClient.post<TokenResponse>('/auth/login', credentials);
+};
+
+export const signup = async (
+    credentials: SignUpCredentials
+): Promise<TokenResponse> => {
+    return await httpClient.post<TokenResponse>('/registration', credentials);
 };
 
 export const logout = (): void => {
