@@ -1,13 +1,41 @@
 import { FileText, ClipboardList, Network, MessageSquare, BarChart3, Library, TrendingUp, Book, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { storageService } from '@/shared/services/storage.service';
+import { useEffect, useState } from 'react';
 
 export function DashboardPage() {
-  const stats = [
-    { label: 'Books Uploaded', value: '12', icon: Book, color: 'blue' },
-    { label: 'Quizzes Taken', value: '48', icon: ClipboardList, color: 'purple' },
-    { label: 'Study Hours', value: '156', icon: Clock, color: 'blue' },
-    { label: 'Current Streak', value: '7 days', icon: TrendingUp, color: 'green' },
-  ];
+  const [stats, setStats] = useState([
+    { label: 'Books Uploaded', value: '0', icon: Book, color: 'blue' },
+    { label: 'Quizzes Taken', value: '0', icon: ClipboardList, color: 'purple' },
+    { label: 'Study Hours', value: '0', icon: Clock, color: 'blue' },
+    { label: 'Current Streak', value: '0 days', icon: TrendingUp, color: 'green' },
+  ]);
+  const [userName, setUserName] = useState('Student');
+
+  useEffect(() => {
+    const user = storageService.getUser();
+    const statsData = storageService.getStats();
+
+    if (user) {
+      setUserName(user.fullName);
+    }
+
+    setStats([
+      { label: 'Books Uploaded', value: statsData.booksUploaded.toString(), icon: Book, color: 'blue' },
+      { label: 'Quizzes Taken', value: statsData.quizzesTaken.toString(), icon: ClipboardList, color: 'purple' },
+      { label: 'Study Hours', value: statsData.studyHours.toString(), icon: Clock, color: 'blue' },
+      { label: 'Current Streak', value: `${statsData.streak} days`, icon: TrendingUp, color: 'green' },
+    ]);
+
+    // Generate recent activity from uploaded files
+    const files = storageService.getFiles();
+    const activity = files.slice(0, 4).map(file => ({
+      title: `Uploaded: ${file.name}`,
+      time: file.uploadedAt,
+      type: 'upload' as const
+    }));
+    setRecentActivity(activity);
+  }, []);
 
   const features = [
     {
@@ -54,19 +82,14 @@ export function DashboardPage() {
     },
   ];
 
-  const recentActivity = [
-    { title: 'Completed Quiz: Chapter 5', time: '2 hours ago', type: 'quiz' },
-    { title: 'Generated Mind Map: Physics Basics', time: '5 hours ago', type: 'mindmap' },
-    { title: 'Uploaded: Introduction to AI.pdf', time: '1 day ago', type: 'upload' },
-    { title: 'Asked AI Tutor 3 questions', time: '2 days ago', type: 'tutor' },
-  ];
+  const [recentActivity, setRecentActivity] = useState<Array<{ title: string; time: string; type: 'quiz' | 'mindmap' | 'upload' | 'tutor' }>>([]);
 
   return (
     <div className="ml-64 min-h-screen p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl mb-3">Welcome back, Student! 👋</h1>
+          <h1 className="text-4xl mb-3">Welcome back, {userName}! 👋</h1>
           <p className="text-gray-400">
             Here's what's happening with your learning today
           </p>
@@ -120,24 +143,29 @@ export function DashboardPage() {
         <div>
           <h2 className="text-2xl mb-6">Recent Activity</h2>
           <div className="bg-white/5 border border-white/10 rounded-xl divide-y divide-white/10">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="p-5 hover:bg-white/5 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="mb-1">{activity.title}</div>
-                    <div className="text-sm text-gray-400">{activity.time}</div>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full text-xs ${
-                    activity.type === 'quiz' ? 'bg-purple-500/20 text-purple-400' :
-                    activity.type === 'mindmap' ? 'bg-cyan-500/20 text-cyan-400' :
-                    activity.type === 'upload' ? 'bg-blue-500/20 text-blue-400' :
-                    'bg-green-500/20 text-green-400'
-                  }`}>
-                    {activity.type}
+            {recentActivity.length === 0 ? (
+              <div className="p-8 text-center text-gray-400">
+                <p>No recent activity yet. Start by uploading your first book!</p>
+              </div>
+            ) : (
+              recentActivity.map((activity, index) => (
+                <div key={index} className="p-5 hover:bg-white/5 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="mb-1">{activity.title}</div>
+                      <div className="text-sm text-gray-400">{activity.time}</div>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs ${activity.type === 'quiz' ? 'bg-purple-500/20 text-purple-400' :
+                      activity.type === 'mindmap' ? 'bg-cyan-500/20 text-cyan-400' :
+                        activity.type === 'upload' ? 'bg-blue-500/20 text-blue-400' :
+                          'bg-green-500/20 text-green-400'
+                      }`}>
+                      {activity.type}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

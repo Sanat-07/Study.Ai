@@ -1,71 +1,25 @@
-import { useState, useCallback } from 'react';
-import { Upload, FileText, CheckCircle, XCircle, Clock, Link as LinkIcon, Code } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { Upload, FileText, CheckCircle, XCircle, Clock, Link as LinkIcon, Code, Sparkles, Zap } from 'lucide-react';
+import { storageService, FileMetadata } from '@/shared/services/storage.service';
 
-interface UploadedFile {
-  id: string;
-  name: string;
-  type: 'pdf' | 'epub' | 'txt' | 'docx' | 'pptx' | 'image' | 'url' | 'github';
-  size: string;
-  status: 'uploading' | 'processing' | 'success' | 'error';
-  progress: number;
-  uploadedAt: string;
-}
+type UploadedFile = FileMetadata;
 
 export function UploadPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<'files' | 'url' | 'github'>('files');
   const [urlInput, setUrlInput] = useState('');
   const [repoInput, setRepoInput] = useState('');
-  const [files, setFiles] = useState<UploadedFile[]>([
-    {
-      id: '1',
-      name: 'Introduction to Psychology.pdf',
-      type: 'pdf',
-      size: '12.4 MB',
-      status: 'success',
-      progress: 100,
-      uploadedAt: '2 hours ago'
-    },
-    {
-      id: '2',
-      name: 'Quantum Physics Basics.epub',
-      type: 'epub',
-      size: '8.7 MB',
-      status: 'success',
-      progress: 100,
-      uploadedAt: '1 day ago'
-    }
-  ]);
+  const [files, setFiles] = useState<UploadedFile[]>([]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
+  useEffect(() => {
+    const savedFiles = storageService.getFiles();
+    setFiles(savedFiles);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    handleFiles(droppedFiles);
-  }, []);
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
-      handleFiles(selectedFiles);
-    }
-  }, []);
-
-  const handleFiles = (fileList: File[]) => {
-    const newFiles: UploadedFile[] = fileList.map((file, index) => {
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'txt';
-      const typeMap: Record<string, UploadedFile['type']> = {
+  const handleFiles = useCallback((fileList: FileList) => {
+    const newFiles: UploadedFile[] = Array.from(fileList).map((file, index) => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      const typeMap: Record<string, string> = {
         pdf: 'pdf',
         epub: 'epub',
         txt: 'txt',
@@ -77,7 +31,7 @@ export function UploadPage() {
         jpg: 'image',
         jpeg: 'image',
       };
-      
+
       return {
         id: Date.now().toString() + index,
         name: file.name,
@@ -91,25 +45,54 @@ export function UploadPage() {
 
     setFiles(prev => [...newFiles, ...prev]);
 
-    // Simulate upload progress
-    newFiles.forEach((file, index) => {
+    newFiles.forEach((newFileMetadata, index) => {
+      const originalFile = fileList[index];
       let progress = 0;
       const interval = setInterval(() => {
         progress += 10;
-        if (progress <= 100) {
-          const status = progress < 100 ? 'uploading' : progress === 100 ? 'processing' : 'success';
-          setFiles(prev => prev.map(f => 
-            f.id === file.id ? { ...f, progress, status } : f
+        if (progress <= 90) {
+          setFiles(prev => prev.map(f =>
+            f.id === newFileMetadata.id ? { ...f, progress } : f
           ));
         } else {
-          setFiles(prev => prev.map(f => 
-            f.id === file.id ? { ...f, status: 'success' } : f
-          ));
           clearInterval(interval);
+
+          const uploadedFile = {
+            id: newFileMetadata.id,
+            name: originalFile.name,
+            type: newFileMetadata.type,
+            size: (originalFile.size / (1024 * 1024)).toFixed(1) + ' MB',
+            uploadedAt: 'Just now',
+            progress: 100,
+            status: 'success' as const
+          };
+          storageService.saveFile(uploadedFile);
+
+          setFiles(prev => prev.map(f =>
+            f.id === newFileMetadata.id ? { ...f, progress: 100, status: 'success' } : f
+          ));
         }
       }, 200 + index * 100);
     });
-  };
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files) {
+      handleFiles(e.dataTransfer.files);
+    }
+  }, [handleFiles]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
 
   const handleUrlUpload = () => {
     if (!urlInput.trim()) return;
@@ -125,20 +108,23 @@ export function UploadPage() {
     };
 
     setFiles(prev => [newFile, ...prev]);
-    setUrlInput('');
 
-    // Simulate processing
     let progress = 0;
     const interval = setInterval(() => {
       progress += 15;
       if (progress <= 100) {
-        setFiles(prev => prev.map(f => 
-          f.id === newFile.id ? { ...f, progress, status: progress === 100 ? 'success' : 'uploading' } : f
-        ));
+        const status: 'success' | 'uploading' = progress === 100 ? 'success' : 'uploading';
+        const updatedFile = { ...newFile, progress, status };
+        if (status === 'success') {
+          storageService.saveFile(updatedFile);
+        }
+        setFiles(prev => prev.map(f => f.id === newFile.id ? updatedFile : f));
       } else {
         clearInterval(interval);
       }
     }, 300);
+
+    setUrlInput('');
   };
 
   const handleGithubUpload = () => {
@@ -155,269 +141,215 @@ export function UploadPage() {
     };
 
     setFiles(prev => [newFile, ...prev]);
-    setRepoInput('');
 
-    // Simulate processing
     let progress = 0;
     const interval = setInterval(() => {
       progress += 12;
       if (progress <= 100) {
-        setFiles(prev => prev.map(f => 
-          f.id === newFile.id ? { ...f, progress, status: progress === 100 ? 'success' : 'uploading' } : f
-        ));
+        const status: 'success' | 'uploading' = progress === 100 ? 'success' : 'uploading';
+        const updatedFile = { ...newFile, progress, status };
+        if (status === 'success') {
+          storageService.saveFile(updatedFile);
+        }
+        setFiles(prev => prev.map(f => f.id === newFile.id ? updatedFile : f));
       } else {
         clearInterval(interval);
       }
     }, 400);
-  };
 
-  const getFileIcon = (type: UploadedFile['type']) => {
-    switch (type) {
-      case 'url':
-        return <LinkIcon className="w-6 h-6 text-blue-400" />;
-      case 'github':
-        return <Code className="w-6 h-6 text-purple-400" />;
-      default:
-        return <FileText className="w-6 h-6 text-blue-400" />;
-    }
-  };
-
-  const getStatusColor = (status: UploadedFile['status']) => {
-    switch (status) {
-      case 'uploading':
-        return 'text-yellow-400';
-      case 'processing':
-        return 'text-blue-400';
-      case 'success':
-        return 'text-green-400';
-      case 'error':
-        return 'text-red-400';
-    }
+    setRepoInput('');
   };
 
   return (
-    <div className="ml-64 min-h-screen p-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="ml-64 min-h-screen p-8 bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-900/20">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl mb-3">Upload Resources</h1>
-          <p className="text-gray-400">
-            Upload books, documents, or import content from URLs and GitHub repositories
-          </p>
+          <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-3">
+            <Sparkles className="w-12 h-12 text-blue-400" />
+            Upload Resources
+          </h1>
+          <p className="text-gray-400 text-lg">Upload books, documents, or import content from URLs and GitHub repositories</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 bg-white/5 border border-white/10 rounded-xl p-1">
+        <div className="flex gap-3 mb-6">
           <button
             onClick={() => setActiveTab('files')}
-            className={`flex-1 px-4 py-3 rounded-lg transition-all ${
-              activeTab === 'files' ? 'bg-blue-500 text-white' : 'hover:bg-white/5'
-            }`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'files'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+              }`}
           >
-            <Upload className="w-4 h-4 inline mr-2" />
+            <Upload className="w-5 h-5" />
             Files
           </button>
           <button
             onClick={() => setActiveTab('url')}
-            className={`flex-1 px-4 py-3 rounded-lg transition-all ${
-              activeTab === 'url' ? 'bg-blue-500 text-white' : 'hover:bg-white/5'
-            }`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'url'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+              }`}
           >
-            <LinkIcon className="w-4 h-4 inline mr-2" />
+            <LinkIcon className="w-5 h-5" />
             URL
           </button>
           <button
             onClick={() => setActiveTab('github')}
-            className={`flex-1 px-4 py-3 rounded-lg transition-all ${
-              activeTab === 'github' ? 'bg-blue-500 text-white' : 'hover:bg-white/5'
-            }`}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'github'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+              }`}
           >
-            <Code className="w-4 h-4 inline mr-2" />
+            <Code className="w-5 h-5" />
             GitHub
           </button>
         </div>
 
-        {/* Upload Areas */}
-        {activeTab === 'files' && (
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all ${
-              isDragging 
-                ? 'border-blue-500 bg-blue-500/10' 
-                : 'border-white/20 bg-white/5 hover:border-blue-500/50'
-            }`}
-          >
-            <div className="flex flex-col items-center gap-4">
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
-                isDragging ? 'bg-blue-500' : 'bg-blue-500/20'
-              }`}>
-                <Upload className="w-8 h-8 text-blue-400" />
+        {/* Upload Area */}
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 mb-8">
+          {activeTab === 'files' && (
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all ${isDragging
+                  ? 'border-blue-500 bg-blue-500/10 scale-105'
+                  : 'border-white/20 hover:border-blue-500/50 hover:bg-white/5'
+                }`}
+            >
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Upload className={`w-10 h-10 text-blue-400 ${isDragging ? 'animate-bounce' : ''}`} />
               </div>
-              
-              <div>
-                <h3 className="text-xl mb-2">
-                  {isDragging ? 'Drop your files here' : 'Drag & drop your files here'}
-                </h3>
-                <p className="text-gray-400 mb-4">
-                  or click to browse from your computer
-                </p>
-              </div>
-
-              <label className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer transition-colors">
+              <h3 className="text-2xl font-bold mb-2">Drag & drop your files here</h3>
+              <p className="text-gray-400 mb-6">or click to browse from your computer</p>
+              <input
+                type="file"
+                multiple
+                onChange={(e) => e.target.files && handleFiles(e.target.files)}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-semibold cursor-pointer transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
+              >
+                <Zap className="w-5 h-5 inline mr-2" />
                 Browse Files
-                <input
-                  type="file"
-                  multiple
-                  accept=".pdf,.epub,.txt,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg"
-                  onChange={handleFileInput}
-                  className="hidden"
-                />
               </label>
-
-              <div className="flex flex-wrap gap-2 justify-center text-xs text-gray-500 mt-2">
-                <span className="px-3 py-1 bg-white/5 rounded-full">PDF</span>
-                <span className="px-3 py-1 bg-white/5 rounded-full">EPUB</span>
-                <span className="px-3 py-1 bg-white/5 rounded-full">TXT</span>
-                <span className="px-3 py-1 bg-white/5 rounded-full">DOCX</span>
-                <span className="px-3 py-1 bg-white/5 rounded-full">PPTX</span>
-                <span className="px-3 py-1 bg-white/5 rounded-full">Images</span>
+              <div className="flex gap-2 justify-center mt-6 flex-wrap">
+                {['PDF', 'EPUB', 'TXT', 'DOCX', 'PPTX', 'Images'].map(type => (
+                  <span key={type} className="px-3 py-1 bg-white/5 rounded-lg text-sm text-gray-400">
+                    {type}
+                  </span>
+                ))}
               </div>
-              <p className="text-sm text-gray-500">Max file size: 50MB</p>
+              <p className="text-sm text-gray-500 mt-4">Max file size: 50MB</p>
             </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === 'url' && (
-          <div className="border-2 border-dashed border-white/20 rounded-2xl p-12 bg-white/5">
+          {activeTab === 'url' && (
             <div className="max-w-2xl mx-auto">
-              <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <LinkIcon className="w-8 h-8 text-blue-400" />
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <LinkIcon className="w-10 h-10 text-blue-400" />
               </div>
-              <h3 className="text-xl mb-2 text-center">Import from URL</h3>
-              <p className="text-gray-400 mb-6 text-center">
-                Paste a public URL to import content from the web
-              </p>
-              
+              <h3 className="text-2xl font-bold mb-2 text-center">Import from URL</h3>
+              <p className="text-gray-400 mb-6 text-center">Paste a link to a document or article</p>
               <div className="flex gap-3">
                 <input
                   type="url"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   placeholder="https://example.com/document.pdf"
-                  className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  onKeyPress={(e) => e.key === 'Enter' && handleUrlUpload()}
                 />
                 <button
                   onClick={handleUrlUpload}
-                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
                 >
                   Import
                 </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === 'github' && (
-          <div className="border-2 border-dashed border-white/20 rounded-2xl p-12 bg-white/5">
+          {activeTab === 'github' && (
             <div className="max-w-2xl mx-auto">
-              <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Code className="w-8 h-8 text-purple-400" />
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Code className="w-10 h-10 text-blue-400" />
               </div>
-              <h3 className="text-xl mb-2 text-center">Import from GitHub</h3>
-              <p className="text-gray-400 mb-6 text-center">
-                Import documentation from a public GitHub repository
-              </p>
-              
+              <h3 className="text-2xl font-bold mb-2 text-center">Import from GitHub</h3>
+              <p className="text-gray-400 mb-6 text-center">Enter a GitHub repository URL</p>
               <div className="flex gap-3">
                 <input
                   type="text"
                   value={repoInput}
                   onChange={(e) => setRepoInput(e.target.value)}
-                  placeholder="username/repository"
-                  className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500"
+                  placeholder="https://github.com/username/repository"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  onKeyPress={(e) => e.key === 'Enter' && handleGithubUpload()}
                 />
                 <button
                   onClick={handleGithubUpload}
-                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
                 >
                   Import
                 </button>
               </div>
-              <p className="text-sm text-gray-500 mt-3 text-center">
-                Example: facebook/react or torvalds/linux
-              </p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Recently Uploaded */}
-        <div className="mt-12">
-          <h2 className="text-2xl mb-6">Recently Uploaded</h2>
-          
-          <div className="space-y-3">
-            {files.map(file => (
-              <div
-                key={file.id}
-                className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    {getFileIcon(file.type)}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="truncate pr-4">{file.name}</h3>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {file.status === 'uploading' && (
-                          <Clock className="w-5 h-5 text-yellow-400 animate-pulse" />
-                        )}
-                        {file.status === 'processing' && (
-                          <Clock className="w-5 h-5 text-blue-400 animate-spin" />
-                        )}
-                        {file.status === 'success' && (
-                          <CheckCircle className="w-5 h-5 text-green-400" />
-                        )}
-                        {file.status === 'error' && (
-                          <XCircle className="w-5 h-5 text-red-400" />
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
-                      <span className="uppercase">{file.type}</span>
-                      <span>•</span>
-                      <span>{file.size}</span>
-                      <span>•</span>
-                      <span>{file.uploadedAt}</span>
-                      {(file.status === 'uploading' || file.status === 'processing') && (
-                        <>
-                          <span>•</span>
-                          <span className={getStatusColor(file.status)}>
-                            {file.status === 'uploading' ? 'Uploading' : 'Processing'} {file.progress}%
-                          </span>
-                        </>
+        {/* Uploaded Files */}
+        {files.length > 0 && (
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <FileText className="w-6 h-6 text-blue-400" />
+              Recent Uploads
+            </h2>
+            <div className="space-y-3">
+              {files.map((file) => (
+                <div key={file.id} className="bg-white/5 rounded-xl p-4 hover:bg-white/10 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${file.status === 'success' ? 'bg-green-500/20' :
+                        file.status === 'error' ? 'bg-red-500/20' : 'bg-blue-500/20'
+                      }`}>
+                      {file.status === 'success' ? (
+                        <CheckCircle className="w-6 h-6 text-green-400" />
+                      ) : file.status === 'error' ? (
+                        <XCircle className="w-6 h-6 text-red-400" />
+                      ) : (
+                        <Clock className="w-6 h-6 text-blue-400 animate-spin" />
                       )}
                     </div>
-
-                    {(file.status === 'uploading' || file.status === 'processing') && (
-                      <div className="mt-3 w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                        <div 
-                          className={`h-full transition-all duration-300 ${
-                            file.status === 'uploading' ? 'bg-yellow-500' : 'bg-blue-500'
-                          }`}
-                          style={{ width: `${file.progress}%` }}
-                        />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold truncate">{file.name}</div>
+                      <div className="text-sm text-gray-400">{file.size}</div>
+                    </div>
+                    {file.status === 'uploading' && (
+                      <div className="w-48">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm text-gray-400">Uploading...</span>
+                          <span className="text-sm font-semibold text-blue-400">{file.progress}%</span>
+                        </div>
+                        <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+                            style={{ width: `${file.progress}%` }}
+                          ></div>
+                        </div>
                       </div>
+                    )}
+                    {file.status === 'success' && (
+                      <span className="text-sm text-green-400 font-semibold">Completed</span>
                     )}
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

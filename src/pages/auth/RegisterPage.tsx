@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Github } from 'lucide-react';
-import {signup} from "@/shared/api/endpoints/auth.api.ts";
-import {setAuthToken} from "@/shared/api/axiosInstance.ts";
+import { googleLogin } from "@/shared/api/endpoints/auth.api.ts";
+import { setAuthToken } from "@/shared/api/axiosInstance.ts";
 import Cookies from "js-cookie";
+import { useGoogleLogin } from '@react-oauth/google';
+import { storageService } from '@/shared/services/storage.service';
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -19,14 +21,37 @@ export function RegisterPage() {
             alert('Please agree to the Terms of Service and Privacy Policy');
             return;
         }
-        signup({email: email, password: password, fullName: fullname}).then(response => {
-            if(response) {
-                const { accessToken } = response;
-                setAuthToken(accessToken);
-                Cookies.set('token', accessToken);
-                navigate('/dashboard');
+        // Mock signup - no backend needed
+        const mockToken = 'mock_token_' + Date.now();
+        setAuthToken(mockToken);
+        Cookies.set('token', mockToken);
+        storageService.saveUser({ id: '1', email, fullName: fullname });
+        navigate('/dashboard');
+    };
+
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            try {
+                const response = await googleLogin(tokenResponse.access_token);
+                if (response) {
+                    const { accessToken } = response;
+                    setAuthToken(accessToken);
+                    Cookies.set('token', accessToken);
+                    navigate('/dashboard');
+                }
+            } catch (error) {
+                console.error('Google login failed:', error);
             }
-        })
+        },
+        onError: () => {
+            console.error('Google login failed');
+        }
+    });
+
+    const handleGithubLogin = () => {
+        const clientId = "YOUR_GITHUB_CLIENT_ID";
+        const redirectUri = window.location.origin + '/login';
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
     };
 
     return (
@@ -150,7 +175,7 @@ export function RegisterPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <button type="button" className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
+                        <button type="button" onClick={() => handleGoogleLogin()} className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
                             <svg className="w-5 h-5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z" fill="#4285F4" />
                                 <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853" />
@@ -159,7 +184,7 @@ export function RegisterPage() {
                             </svg>
                             Sign up with Google
                         </button>
-                        <button type="button" className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
+                        <button type="button" onClick={handleGithubLogin} className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
                             <Github className="w-5 h-5" />
                             Sign up with GitHub
                         </button>

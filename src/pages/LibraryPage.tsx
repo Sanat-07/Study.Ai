@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Grid, List, Clock, FileText, Download, Filter, ArrowUpDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { storageService } from '@/shared/services/storage.service';
 
 interface Book {
   id: string;
   title: string;
   author: string;
-  type: 'pdf' | 'epub' | 'txt' | 'docx' | 'pptx' | 'url' | 'github';
+  type: 'pdf' | 'epub' | 'txt' | 'docx' | 'pptx' | 'url' | 'github' | 'image';
   size: string;
   uploadedAt: string;
   progress: number;
@@ -19,68 +20,23 @@ export function LibraryPage() {
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('date');
 
-  const books: Book[] = [
-    {
-      id: '1',
-      title: 'Introduction to Psychology',
-      author: 'John Doe',
-      type: 'pdf',
-      size: '12.4 MB',
-      uploadedAt: '2 hours ago',
-      progress: 75,
-      thumbnail: 'blue'
-    },
-    {
-      id: '2',
-      title: 'Quantum Physics Basics',
-      author: 'Jane Smith',
-      type: 'epub',
-      size: '8.7 MB',
-      uploadedAt: '1 day ago',
-      progress: 40,
-      thumbnail: 'purple'
-    },
-    {
-      id: '3',
-      title: 'Modern History',
-      author: 'Robert Johnson',
-      type: 'pdf',
-      size: '15.2 MB',
-      uploadedAt: '3 days ago',
-      progress: 90,
-      thumbnail: 'green'
-    },
-    {
-      id: '4',
-      title: 'Advanced Mathematics',
-      author: 'Emily Davis',
-      type: 'docx',
-      size: '10.1 MB',
-      uploadedAt: '1 week ago',
-      progress: 25,
-      thumbnail: 'orange'
-    },
-    {
-      id: '5',
-      title: 'Biology Fundamentals',
-      author: 'Michael Brown',
-      type: 'pdf',
-      size: '18.9 MB',
-      uploadedAt: '2 weeks ago',
-      progress: 60,
-      thumbnail: 'cyan'
-    },
-    {
-      id: '6',
-      title: 'World Literature',
-      author: 'Sarah Wilson',
-      type: 'epub',
-      size: '22.3 MB',
-      uploadedAt: '3 weeks ago',
-      progress: 100,
-      thumbnail: 'pink'
-    },
-  ];
+  const [books, setBooks] = useState<Book[]>([]);
+
+  useEffect(() => {
+    // Load books from localStorage
+    const files = storageService.getFiles();
+    const booksFromStorage: Book[] = files.map((file, index) => ({
+      id: file.id,
+      title: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
+      author: 'Unknown', // We don't have author info yet
+      type: file.type,
+      size: file.size,
+      uploadedAt: file.uploadedAt,
+      progress: 0, // Default progress
+      thumbnail: ['blue', 'purple', 'green', 'orange', 'cyan', 'pink'][index % 6] as any
+    }));
+    setBooks(booksFromStorage);
+  }, []);
 
   const colorClasses = {
     blue: 'from-blue-500/30 to-blue-600/30',
@@ -93,7 +49,7 @@ export function LibraryPage() {
 
   const filteredBooks = books.filter(book => {
     const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         book.author.toLowerCase().includes(searchQuery.toLowerCase());
+      book.author.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = filterType === 'all' || book.type === filterType;
     return matchesSearch && matchesFilter;
   });
@@ -159,17 +115,15 @@ export function LibraryPage() {
           <div className="flex gap-2 bg-white/5 border border-white/10 rounded-xl p-1">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${
-                viewMode === 'grid' ? 'bg-blue-500' : 'hover:bg-white/5'
-              }`}
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-blue-500' : 'hover:bg-white/5'
+                }`}
             >
               <Grid className="w-5 h-5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${
-                viewMode === 'list' ? 'bg-blue-500' : 'hover:bg-white/5'
-              }`}
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-blue-500' : 'hover:bg-white/5'
+                }`}
             >
               <List className="w-5 h-5" />
             </button>
@@ -210,7 +164,7 @@ export function LibraryPage() {
                       <span className="text-blue-400">{book.progress}%</span>
                     </div>
                     <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                      <div 
+                      <div
                         className="bg-blue-500 h-full transition-all duration-300"
                         style={{ width: `${book.progress}%` }}
                       />
@@ -269,7 +223,7 @@ export function LibraryPage() {
                     <span className="text-blue-400">{book.progress}%</span>
                   </div>
                   <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                    <div 
+                    <div
                       className="bg-blue-500 h-full transition-all duration-300"
                       style={{ width: `${book.progress}%` }}
                     />

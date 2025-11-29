@@ -1,208 +1,196 @@
-import { TrendingUp, Award, Target, Book, Flame, Calendar } from 'lucide-react';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { TrendingUp, Award, Target, Book, Flame, Calendar, Trophy, Zap, Star } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { storageService } from '@/shared/services/storage.service';
+import { useState, useEffect } from 'react';
+
+interface Book {
+  title: string;
+  progress: number;
+  chapters: string;
+}
 
 export function ProgressPage() {
   const weeklyData = [
-    { day: 'Mon', minutes: 45 },
-    { day: 'Tue', minutes: 60 },
-    { day: 'Wed', minutes: 30 },
-    { day: 'Thu', minutes: 75 },
-    { day: 'Fri', minutes: 50 },
-    { day: 'Sat', minutes: 90 },
-    { day: 'Sun', minutes: 40 },
+    { name: 'Mon', hours: 2.5 },
+    { name: 'Tue', hours: 3.2 },
+    { name: 'Wed', hours: 1.8 },
+    { name: 'Thu', hours: 4.1 },
+    { name: 'Fri', hours: 2.9 },
+    { name: 'Sat', hours: 5.2 },
+    { name: 'Sun', hours: 3.5 },
   ];
 
-  const quizPerformance = [
-    { chapter: 'Ch 1', score: 85 },
-    { chapter: 'Ch 2', score: 92 },
-    { chapter: 'Ch 3', score: 78 },
-    { chapter: 'Ch 4', score: 88 },
-    { chapter: 'Ch 5', score: 95 },
+  const skillData = [
+    { subject: 'Math', score: 85 },
+    { subject: 'Science', score: 92 },
+    { subject: 'History', score: 78 },
+    { subject: 'Literature', score: 88 },
+    { subject: 'Languages', score: 75 },
   ];
 
-  const activityData = [
-    { name: 'Reading', value: 35, color: '#3b82f6' },
-    { name: 'Quizzes', value: 25, color: '#8b5cf6' },
-    { name: 'AI Tutor', value: 20, color: '#06b6d4' },
-    { name: 'Mind Maps', value: 20, color: '#10b981' },
-  ];
+  const [books, setBooks] = useState<Book[]>([]);
+  const [booksCompleted, setBooksCompleted] = useState(0);
+  const [totalStudyHours, setTotalStudyHours] = useState(0);
+  const [streak, setStreak] = useState(0);
 
-  const books = [
-    { title: 'Introduction to Psychology', progress: 75, chapters: '6/8' },
-    { title: 'Quantum Physics Basics', progress: 40, chapters: '3/10' },
-    { title: 'Modern History', progress: 90, chapters: '9/10' },
-  ];
+  useEffect(() => {
+    const stats = storageService.getStats();
+    const files = storageService.getFiles();
+
+    setBooksCompleted(stats.booksUploaded);
+    setTotalStudyHours(stats.studyHours);
+    setStreak(stats.streak);
+
+    const booksProgress = files.slice(0, 3).map(file => ({
+      title: file.name.replace(/\.[^/.]+$/, ''),
+      progress: Math.floor(Math.random() * 100),
+      chapters: `${Math.floor(Math.random() * 10)}/10`
+    }));
+    setBooks(booksProgress);
+  }, []);
 
   return (
-    <div className="ml-64 min-h-screen p-8">
+    <div className="ml-64 min-h-screen p-8 bg-gradient-to-br from-gray-900 via-gray-900 to-purple-900/20">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl mb-3">Your Progress</h1>
-          <p className="text-gray-400">
-            Track your learning journey and achievements
-          </p>
+          <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Your Progress
+          </h1>
+          <p className="text-gray-400 text-lg">Track your learning journey and achievements</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/5 border border-blue-500/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <Book className="w-6 h-6 text-blue-400" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="relative overflow-hidden bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                  <Book className="w-6 h-6 text-blue-400" />
+                </div>
+                <TrendingUp className="w-5 h-5 text-blue-400" />
               </div>
-              <TrendingUp className="w-5 h-5 text-blue-400" />
+              <div className="text-4xl font-bold mb-1">{booksCompleted}</div>
+              <div className="text-sm text-gray-400">Books Completed</div>
             </div>
-            <div className="text-3xl mb-1">12</div>
-            <div className="text-sm text-gray-400">Books Completed</div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                <Award className="w-6 h-6 text-purple-400" />
+          <div className="relative overflow-hidden bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                  <Award className="w-6 h-6 text-purple-400" />
+                </div>
+                <Trophy className="w-5 h-5 text-purple-400" />
               </div>
-              <TrendingUp className="w-5 h-5 text-purple-400" />
+              <div className="text-4xl font-bold mb-1">95%</div>
+              <div className="text-sm text-gray-400">Average Score</div>
             </div>
-            <div className="text-3xl mb-1">87%</div>
-            <div className="text-sm text-gray-400">Average Quiz Score</div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-500/20 to-orange-500/5 border border-orange-500/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                <Flame className="w-6 h-6 text-orange-400" />
+          <div className="relative overflow-hidden bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-green-400" />
+                </div>
+                <Flame className="w-5 h-5 text-green-400" />
               </div>
-              <TrendingUp className="w-5 h-5 text-orange-400" />
+              <div className="text-4xl font-bold mb-1">{totalStudyHours}h</div>
+              <div className="text-sm text-gray-400">Total Study Time</div>
             </div>
-            <div className="text-3xl mb-1">14</div>
-            <div className="text-sm text-gray-400">Day Streak</div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                <Target className="w-6 h-6 text-green-400" />
+          <div className="relative overflow-hidden bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-orange-400" />
+                </div>
+                <Star className="w-5 h-5 text-orange-400" />
               </div>
-              <Calendar className="w-5 h-5 text-green-400" />
+              <div className="text-4xl font-bold mb-1">{streak}</div>
+              <div className="text-sm text-gray-400">Day Streak</div>
             </div>
-            <div className="text-3xl mb-1">156h</div>
-            <div className="text-sm text-gray-400">Total Study Time</div>
           </div>
         </div>
 
-        {/* Charts Row */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* Weekly Study Time */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-xl mb-6">Weekly Study Time</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Weekly Activity */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-blue-500/30 transition-all">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <TrendingUp className="w-6 h-6 text-blue-400" />
+              Weekly Activity
+            </h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={weeklyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="day" stroke="#9ca3af" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+                <XAxis dataKey="name" stroke="#9ca3af" />
                 <YAxis stroke="#9ca3af" />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                  labelStyle={{ color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' }}
+                  labelStyle={{ color: '#9ca3af' }}
                 />
-                <Bar dataKey="minutes" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="hours" fill="url(#blueGradient)" radius={[8, 8, 0, 0]} />
+                <defs>
+                  <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3b82f6" />
+                    <stop offset="100%" stopColor="#8b5cf6" />
+                  </linearGradient>
+                </defs>
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Quiz Performance */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-xl mb-6">Quiz Performance Trend</h2>
+          {/* Skills Radar */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-purple-500/30 transition-all">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Target className="w-6 h-6 text-purple-400" />
+              Skills Overview
+            </h2>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={quizPerformance}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="chapter" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" domain={[0, 100]} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                  labelStyle={{ color: '#fff' }}
-                />
-                <Line type="monotone" dataKey="score" stroke="#8b5cf6" strokeWidth={3} dot={{ fill: '#8b5cf6', r: 6 }} />
-              </LineChart>
+              <RadarChart data={skillData}>
+                <PolarGrid stroke="#ffffff20" />
+                <PolarAngleAxis dataKey="subject" stroke="#9ca3af" />
+                <PolarRadiusAxis stroke="#9ca3af" />
+                <Radar name="Score" dataKey="score" stroke="#a855f7" fill="#a855f7" fillOpacity={0.3} />
+              </RadarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Activity Distribution & Book Progress */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* Activity Distribution */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-xl mb-6">Activity Distribution</h2>
-            <div className="flex items-center justify-center">
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={activityData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
-                  >
-                    {activityData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Reading Progress */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-xl mb-6">Current Reading Progress</h2>
-            <div className="space-y-5">
-              {books.map((book, index) => (
-                <div key={index}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex-1 min-w-0 pr-4">
-                      <div className="text-sm truncate">{book.title}</div>
-                      <div className="text-xs text-gray-400">{book.chapters} chapters</div>
-                    </div>
-                    <div className="text-sm text-blue-400">{book.progress}%</div>
-                  </div>
-                  <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-300"
-                      style={{ width: `${book.progress}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* AI Recommendations */}
-        <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl p-6">
-          <h2 className="text-xl mb-4 flex items-center gap-2">
-            <Target className="w-6 h-6 text-blue-400" />
-            AI Recommendations
+        {/* Current Reading */}
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <Book className="w-6 h-6 text-green-400" />
+            Current Reading Progress
           </h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-white/5 rounded-lg p-4">
-              <div className="text-sm text-blue-400 mb-1">Focus Area</div>
-              <div className="mb-2">Chapter 3 Review</div>
-              <div className="text-sm text-gray-400">Your quiz score here was 78%. Spend more time on this chapter.</div>
-            </div>
-            <div className="bg-white/5 rounded-lg p-4">
-              <div className="text-sm text-purple-400 mb-1">Study Tip</div>
-              <div className="mb-2">Consistency Boost</div>
-              <div className="text-sm text-gray-400">Try to maintain your 14-day streak! Study for at least 30 minutes today.</div>
-            </div>
-            <div className="bg-white/5 rounded-lg p-4">
-              <div className="text-sm text-green-400 mb-1">Achievement</div>
-              <div className="mb-2">Almost There!</div>
-              <div className="text-sm text-gray-400">You're 10% away from completing Modern History. Keep going!</div>
-            </div>
+          <div className="space-y-4">
+            {books.length > 0 ? books.map((book, index) => (
+              <div key={index} className="bg-white/5 rounded-xl p-4 hover:bg-white/10 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <div className="font-semibold text-lg">{book.title}</div>
+                    <div className="text-sm text-gray-400">{book.chapters} chapters</div>
+                  </div>
+                  <div className="text-2xl font-bold text-blue-400">{book.progress}%</div>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
+                    style={{ width: `${book.progress}%` }}
+                  ></div>
+                </div>
+              </div>
+            )) : (
+              <div className="text-center py-8 text-gray-400">
+                No books in progress. Upload a book to get started!
+              </div>
+            )}
           </div>
         </div>
       </div>

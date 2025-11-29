@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 export function Sidebar() {
   const location = useLocation();
-  
+
   const navItems = [
     { icon: Upload, label: 'Upload', path: '/upload' },
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -26,16 +26,15 @@ export function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          
+
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all group ${
-                isActive 
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
-                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
-              }`}
+              className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all group ${isActive
+                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                }`}
             >
               <Icon className={`w-5 h-5 ${isActive ? '' : 'group-hover:scale-110 transition-transform'}`} />
               <span>{item.label}</span>

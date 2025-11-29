@@ -1,6 +1,18 @@
 import { Bell, Lock, Database, Palette, Globe } from 'lucide-react';
+import { storageService } from '@/shared/services/storage.service';
+import { useNavigate } from 'react-router-dom';
 
 export function SettingsPage() {
+  const navigate = useNavigate();
+
+  const handleClearAllData = () => {
+    if (window.confirm('Барлық деректерді өшіргіңіз келетініне сенімдісіз бе? Бұл әрекетті қайтару мүмкін емес!')) {
+      storageService.clear();
+      alert('Барлық деректер өшірілді! Жаңа аккаунт жасай аласыз.');
+      navigate('/register');
+    }
+  };
+
   return (
     <div className="ml-64 min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
@@ -20,7 +32,7 @@ export function SettingsPage() {
             </div>
             <h2 className="text-2xl">Notifications</h2>
           </div>
-          
+
           <div className="space-y-4">
             <label className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
               <div>
@@ -72,7 +84,7 @@ export function SettingsPage() {
             </div>
             <h2 className="text-2xl">Privacy & Security</h2>
           </div>
-          
+
           <div className="space-y-4">
             <label className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
               <div>
@@ -118,7 +130,7 @@ export function SettingsPage() {
             </div>
             <h2 className="text-2xl">Data Management</h2>
           </div>
-          
+
           <div className="space-y-4">
             <div className="p-4 bg-white/5 rounded-lg">
               <div className="flex items-center justify-between mb-2">
@@ -140,7 +152,10 @@ export function SettingsPage() {
               <div className="text-sm text-gray-400">Remove quizzes older than 90 days</div>
             </button>
 
-            <button className="w-full p-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg transition-colors text-left">
+            <button
+              onClick={handleClearAllData}
+              className="w-full p-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg transition-colors text-left"
+            >
               <div className="mb-1 text-red-400">Delete All Data</div>
               <div className="text-sm text-red-400/70">Permanently remove all your books and progress</div>
             </button>
@@ -155,7 +170,7 @@ export function SettingsPage() {
             </div>
             <h2 className="text-2xl">Appearance</h2>
           </div>
-          
+
           <div className="space-y-6">
             <div>
               <label className="text-sm text-gray-400 mb-3 block">Theme</label>
@@ -196,7 +211,7 @@ export function SettingsPage() {
             </div>
             <h2 className="text-2xl">Language & Region</h2>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <label className="text-sm text-gray-400 mb-2 block">Language</label>

@@ -16,7 +16,7 @@ export interface TokenResponse {
 }
 
 export class ApiError {
-    constructor(public message: string, public status?: number) {}
+    constructor(public message: string, public status?: number) { }
 }
 
 export interface User {
@@ -33,6 +33,8 @@ export interface UserSettings {
     notificationsEnabled: boolean;
 }
 
-export interface GoogleLoginResponse extends TokenResponse {}
+export interface GoogleLoginResponse extends TokenResponse { }
 
-export interface PhoneLoginResponse extends TokenResponse {}
+export interface PhoneLoginResponse extends TokenResponse { }
+
+export interface GithubLoginResponse extends TokenResponse { }
