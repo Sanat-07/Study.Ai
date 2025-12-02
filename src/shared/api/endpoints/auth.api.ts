@@ -12,13 +12,23 @@ import { httpClient } from '../client';
 export const login = async (
     credentials: LoginCredentials
 ): Promise<TokenResponse> => {
-    return await httpClient.post<TokenResponse>('/api/auth/login', credentials);
+    return await httpClient.post<TokenResponse>('/auth/login', credentials);
 };
 
 export const signup = async (
     credentials: SignUpCredentials
 ): Promise<TokenResponse> => {
-    return await httpClient.post<TokenResponse>('/api/auth/register', credentials);
+    return await httpClient.post<TokenResponse>('/auth/register', credentials);
+};
+
+export const googleLogin = async (
+    idToken: string): Promise<GoogleLoginResponse> => {
+    return await httpClient.post<GoogleLoginResponse>('/auth/google', { idToken });
+}
+
+export const githubLogin = async (
+    code: string): Promise<GithubLoginResponse> => {
+    return await httpClient.post<GithubLoginResponse>('/auth/github', { code });
 };
 
 export const logout = (): void => {
@@ -44,8 +54,6 @@ export const getToken = (): string | null => {
     return Cookies.get('token') || null;
 };
 
-export const googleLogin = async (idToken: string): Promise<GoogleLoginResponse> => await httpClient.post<GoogleLoginResponse>('/Auth/google', { idToken });
 
-export const githubLogin = async (code: string): Promise<GithubLoginResponse> => await httpClient.post<GithubLoginResponse>('/Auth/github', { code });
 
-export const phoneLogin = async (idToken: string): Promise<PhoneLoginResponse> => await httpClient.post<PhoneLoginResponse>('/Auth/phone-login', { idToken });
+export const phoneLogin = async (idToken: string): Promise<PhoneLoginResponse> => await httpClient.post<PhoneLoginResponse>('/auth/phone-login', { idToken });

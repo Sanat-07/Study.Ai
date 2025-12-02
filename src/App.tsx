@@ -16,13 +16,14 @@ import { ReaderPage } from './pages/ReaderPage';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage.tsx';
 import { RegisterPage } from './pages/auth/RegisterPage.tsx';
+import { EmailVerificationSentPage } from './pages/auth/EmailVerificationSentPage.tsx';
 import { PricingPage } from './pages/PricingPage';
 
 function AppContent() {
   const location = useLocation();
   const isBookPage = location.pathname.startsWith('/book/');
   const isLandingPage = location.pathname === '/';
-  const isAuthPage = ['/login', '/register', '/pricing'].includes(location.pathname);
+  const isAuthPage = ['/login', '/register', '/pricing', '/email-verification-sent'].includes(location.pathname);
 
   return (
     <Layout>
@@ -33,6 +34,7 @@ function AppContent() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/email-verification-sent" element={<EmailVerificationSentPage />} />
         <Route path="/pricing" element={<PricingPage />} />
 
         {/* Main pages */}

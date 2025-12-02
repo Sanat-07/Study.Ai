@@ -43,9 +43,10 @@ export function LoginPage() {
     });
 
     const handleGithubLogin = () => {
-        const clientId = "YOUR_GITHUB_CLIENT_ID";
-        const redirectUri = window.location.origin + '/login';
-        window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
+        const clientId = "Ov23lieKTVcp8Gu4LbHy";
+        const redirectUri = "http://localhost:5173/login";
+        const githubUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
+        window.location.href = githubUrl;
     };
 
     useEffect(() => {
