@@ -1,8 +1,8 @@
 import {
   FileText, Clock, Award, Flame, BookOpen, Target,
-  Bookmark, StickyNote, Share2, Download, ChevronRight,
+  Bookmark, StickyNote, Share2, Download,
   CheckCircle, Circle, Lightbulb, Play, ArrowLeft, Calendar,
-  TrendingUp, BarChart3, MessageSquare, Network, ClipboardList,
+  TrendingUp, MessageSquare, Network, ClipboardList,
   Star, Trophy, Zap
 } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';

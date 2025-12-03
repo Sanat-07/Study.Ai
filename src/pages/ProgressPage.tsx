@@ -1,5 +1,5 @@
 import { TrendingUp, Award, Target, Book, Flame, Calendar, Trophy, Zap, Star } from 'lucide-react';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 import { storageService } from '@/shared/services/storage.service';
 import { useState, useEffect } from 'react';
 

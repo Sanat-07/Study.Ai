@@ -38,7 +38,7 @@ export const storageService = {
 
     getStats: () => {
         const files = storageService.getFiles();
-        const user = storageService.getUser();
+        storageService.getUser();
 
         // Mock stats based on files
         const booksUploaded = files.length;

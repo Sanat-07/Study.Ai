@@ -19,7 +19,7 @@ class ErrorHandler {
     private errorLog: ErrorInfo[] = [];
     private maxLogSize = 100;
 
-    private constructor() {}
+    private constructor() { }
 
     static getInstance(): ErrorHandler {
         if (!ErrorHandler.instance) {
@@ -94,8 +94,8 @@ class ErrorHandler {
             error.message.includes('Network Error') ||
             error.message.includes('Failed to fetch');
 
-        const isAuthError =
-            error.message.includes('401') || error.message.includes('Unauthorized');
+        // const isAuthError =
+        error.message.includes('401') || error.message.includes('Unauthorized');
 
         if (isNetworkError) {
             this.showNotification(

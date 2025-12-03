@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Highlighter, BookmarkPlus, FileDown, FileText, ChevronLeft, ArrowLeft } from 'lucide-react';
+import { Download, Highlighter, BookmarkPlus, ArrowLeft } from 'lucide-react';
 import { useParams, Link } from 'react-router-dom';
 
 export function SummaryPage() {
