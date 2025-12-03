@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Github } from 'lucide-react';
-import { googleLogin, githubLogin } from "@/shared/api/endpoints/auth.api.ts";
+import {googleLogin, githubLogin, login} from "@/shared/api/endpoints/auth.api.ts";
 import { setAuthToken } from "@/shared/api/axiosInstance.ts";
 import Cookies from "js-cookie";
 import { useGoogleLogin } from '@react-oauth/google';
 import { useEffect } from 'react';
-import { storageService } from '@/shared/services/storage.service';
 
 export function LoginPage() {
     const navigate = useNavigate();
@@ -16,13 +15,17 @@ export function LoginPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock login - no backend needed
-        const mockToken = 'mock_token_' + Date.now();
-        setAuthToken(mockToken);
-        Cookies.set('token', mockToken);
-        storageService.saveUser({ id: '1', email, fullName: email.split('@')[0] });
-        navigate('/dashboard');
+        login({email: email, password: password}).then(response => {
+            if(response) {
+                const { accessToken } = response;
+                setAuthToken(accessToken);
+                Cookies.set('token', accessToken);
+                navigate('/dashboard');
+            }
+        })
     };
+
+
     const handleGoogleLogin = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
@@ -43,8 +46,8 @@ export function LoginPage() {
     });
 
     const handleGithubLogin = () => {
-        const clientId = "Ov23lieKTVcp8Gu4LbHy";
-        const redirectUri = "http://localhost:5173/login";
+        const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+        const redirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI;
         const githubUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
         window.location.href = githubUrl;
     };

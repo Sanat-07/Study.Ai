@@ -18,6 +18,7 @@ import { LoginPage } from './pages/auth/LoginPage.tsx';
 import { RegisterPage } from './pages/auth/RegisterPage.tsx';
 import { EmailVerificationSentPage } from './pages/auth/EmailVerificationSentPage.tsx';
 import { PricingPage } from './pages/PricingPage';
+import {GoogleOAuthProvider} from "@react-oauth/google";
 
 function AppContent() {
   const location = useLocation();
@@ -59,8 +60,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppContent />
-    </BrowserRouter>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <BrowserRouter>
+              <AppContent />
+          </BrowserRouter>
+      </GoogleOAuthProvider>
   );
 }

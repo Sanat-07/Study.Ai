@@ -23,7 +23,7 @@ export const signup = async (
 
 export const googleLogin = async (
     idToken: string): Promise<GoogleLoginResponse> => {
-    return await httpClient.post<GoogleLoginResponse>('/auth/google', { idToken });
+    return await httpClient.post<GoogleLoginResponse>('/auth/google', { id_token: idToken });
 }
 
 export const githubLogin = async (

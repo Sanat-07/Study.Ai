@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Github } from 'lucide-react';
-import { googleLogin } from "@/shared/api/endpoints/auth.api.ts";
+import {googleLogin, signup} from "@/shared/api/endpoints/auth.api.ts";
 import { setAuthToken } from "@/shared/api/axiosInstance.ts";
 import Cookies from "js-cookie";
-import { useGoogleLogin } from '@react-oauth/google';
-import { storageService } from '@/shared/services/storage.service';
+import { GoogleLogin } from '@react-oauth/google';
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -21,36 +20,20 @@ export function RegisterPage() {
             alert('Please agree to the Terms of Service and Privacy Policy');
             return;
         }
-        // Mock signup - no backend needed
-        const mockToken = 'mock_token_' + Date.now();
-        setAuthToken(mockToken);
-        Cookies.set('token', mockToken);
-        storageService.saveUser({ id: '1', email, fullName: fullname });
-        navigate('/dashboard');
+        signup({email: email, password: password, fullName: fullname}).then(response => {
+            if(response) {
+                const { accessToken } = response;
+                setAuthToken(accessToken);
+                Cookies.set('token', accessToken);
+                navigate('/dashboard');
+            }
+        })
     };
 
-    const handleGoogleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            try {
-                const response = await googleLogin(tokenResponse.access_token);
-                if (response) {
-                    const { accessToken } = response;
-                    setAuthToken(accessToken);
-                    Cookies.set('token', accessToken);
-                    navigate('/dashboard');
-                }
-            } catch (error) {
-                console.error('Google login failed:', error);
-            }
-        },
-        onError: () => {
-            console.error('Google login failed');
-        }
-    });
 
     const handleGithubLogin = () => {
-        const clientId = "Ov23lieKTVcp8Gu4LbHy";
-        const redirectUri = "http://localhost:5173/login";
+        const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+        const redirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI;
         const githubUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email`;
         window.location.href = githubUrl;
     };
@@ -176,15 +159,27 @@ export function RegisterPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <button type="button" onClick={() => handleGoogleLogin()} className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
-                            <svg className="w-5 h-5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z" fill="#4285F4" />
-                                <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853" />
-                                <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05" />
-                                <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335" />
-                            </svg>
-                            Sign up with Google
-                        </button>
+                        <div className="w-full flex justify-center mb-3">
+                            <GoogleLogin
+                                onSuccess={async (response) => {
+                                    console.log("Google login success:", response);
+                                    try {
+                                        if (response.credential) {
+                                            const res = await googleLogin(response.credential);  // <-- Now backend receives id_token
+                                            if (res) {
+                                                const { accessToken } = res;
+                                                setAuthToken(accessToken);
+                                                Cookies.set("token", accessToken);
+                                                navigate("/dashboard");
+                                            }
+                                        }
+                                    } catch (err) {
+                                        console.error("Google login failed:", err);
+                                    }
+                                }}
+                                onError={() => console.log("Google login failed")}
+                            />
+                        </div>
                         <button type="button" onClick={handleGithubLogin} className="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
                             <Github className="w-5 h-5" />
                             Sign up with GitHub
