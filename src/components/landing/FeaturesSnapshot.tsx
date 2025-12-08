@@ -29,11 +29,11 @@ export function FeaturesSnapshot() {
     ];
 
     return (
-        <section className="py-20 md:py-32 bg-[#0A0A0A]">
+        <section className="py-20 md:py-32 bg-background">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {features.map((f, idx) => (
-                        <div key={idx} className="group p-6 rounded-2xl border border-white/10 bg-[#111] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <div key={idx} className="group p-6 rounded-2xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${f.color} group-hover:scale-110 transition-transform`}>
                                 <f.icon size={24} />
                             </div>

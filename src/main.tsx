@@ -5,10 +5,14 @@ import './globals.css'
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+import { ThemeProvider } from "@/components/theme-provider"
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID_PLACEHOLDER">
-            <App />
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                <App />
+            </ThemeProvider>
         </GoogleOAuthProvider>
     </React.StrictMode>,
 )

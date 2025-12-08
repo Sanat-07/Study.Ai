@@ -10,7 +10,7 @@ import { PricingSnapshot } from "@/components/landing/PricingSnapshot";
 
 export function LandingPage() {
     return (
-        <div className="dark min-h-screen bg-[#0A0A0A] font-body text-foreground selection:bg-primary/20 selection:text-primary">
+        <div className="min-h-screen bg-background font-body text-foreground selection:bg-primary/20 selection:text-primary">
             <Header />
 
             <main>

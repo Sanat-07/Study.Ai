@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -49,6 +50,7 @@ export function Header() {
                     <Link to="/register">
                         <Button>Get Started</Button>
                     </Link>
+                    <ThemeToggle />
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -83,4 +85,23 @@ export function Header() {
             )}
         </header>
     );
+}
+
+
+
+function ThemeToggle() {
+    const { setTheme, theme } = useTheme();
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="w-9 h-9 rounded-full border border-input bg-transparent hover:bg-accent hover:text-accent-foreground"
+        >
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+        </Button>
+    )
 }

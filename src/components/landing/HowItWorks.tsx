@@ -27,9 +27,9 @@ export function HowItWorks() {
     ];
 
     return (
-        <section className="py-20 md:py-32 bg-[#0A0A0A]" id="how-it-works">
+        <section className="py-20 md:py-32 bg-background" id="how-it-works">
             <div className="container mx-auto px-4 md:px-6 text-center">
-                <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-white">How it Works</h2>
+                <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-foreground">How it Works</h2>
                 <p className="text-muted-foreground mb-16 max-w-2xl mx-auto">
                     From raw notes to active recall in seconds. No more manual data entry.
                 </p>
