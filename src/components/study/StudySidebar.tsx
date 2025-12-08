@@ -1,4 +1,4 @@
-import { FileText, CheckSquare, Layers, Edit3, HelpCircle, Network, BarChart } from 'lucide-react';
+import { FileText, CheckSquare, Layers, Edit3, HelpCircle, Network, BarChart, Home } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { storageService } from '@/shared/services/storage.service';
 
@@ -12,13 +12,14 @@ export function StudySidebar() {
     const bookId = pathParts[1] === 'book' ? pathParts[2] : '';
 
     const menuItems = [
-        { icon: BarChart, label: 'Statistics', path: `/book/${bookId}/statistics` },
-        { icon: FileText, label: 'Notes', path: `/book/${bookId}/notes-mode` },
         { icon: CheckSquare, label: 'Multiple Choice', path: `/book/${bookId}/quiz` },
         { icon: Layers, label: 'Flashcards', path: `/book/${bookId}/study` },
         { icon: Network, label: 'Mind Map', path: `/book/${bookId}/mindmap` },
         { icon: Edit3, label: 'Fill in the Blanks', path: `/book/${bookId}/fill-blanks` },
         { icon: HelpCircle, label: 'Open Questions', path: `/book/${bookId}/written-test` },
+        { icon: FileText, label: 'Notes', path: `/book/${bookId}/notes-mode` },
+        { icon: BarChart, label: 'Statistics', path: `/book/${bookId}/statistics` },
+        { icon: Home, label: 'Home', path: '/library' },
     ];
 
     // Identify active item

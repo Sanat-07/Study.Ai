@@ -1,17 +1,14 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Sidebar } from './components/Sidebar';
 import { UploadPage } from './pages/UploadPage';
-import { DashboardPage } from './pages/DashboardPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { ProfilePage } from './pages/ProfilePage';
-import { SettingsPage } from './pages/SettingsPage';
-import { BookDetailsPage } from './pages/BookDetailsPage';
-import { SummaryPage } from './pages/SummaryPage';
+
 import { QuizPage } from './pages/QuizPage';
 import { MindMapPage } from './pages/MindMapPage';
-import { ReaderPage } from './pages/ReaderPage';
+
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage.tsx';
 import { RegisterPage } from './pages/auth/RegisterPage.tsx';
@@ -65,20 +62,24 @@ function AppContent() {
 
           {/* Main pages */}
           <Route path="/upload" element={<PageTransition><UploadPage /></PageTransition>} />
-          <Route path="/dashboard" element={<PageTransition><DashboardPage /></PageTransition>} />
+
           <Route path="/library" element={<PageTransition><LibraryPage /></PageTransition>} />
+          <Route path="/dashboard" element={<Navigate to="/library" replace />} />
+
+          <Route path="/progress" element={<PageTransition><ProgressPage /></PageTransition>} />
           <Route path="/progress" element={<PageTransition><ProgressPage /></PageTransition>} />
           <Route path="/profile" element={<PageTransition><ProfilePage /></PageTransition>} />
-          <Route path="/settings" element={<PageTransition><SettingsPage /></PageTransition>} />
+
           <Route path="/flashcards-mode" element={<PageTransition><FlashcardPage /></PageTransition>} />
           <Route path="/notes-mode" element={<PageTransition><NotesPage /></PageTransition>} />
 
           {/* Book pages */}
-          <Route path="/book/:bookId" element={<BookDetailsPage />} />
-          <Route path="/book/:bookId/summary" element={<SummaryPage />} />
+          <Route path="/book/:bookId" element={<Navigate to="quiz" replace />} />
+
+
           <Route path="/book/:bookId/quiz" element={<QuizPage />} />
           <Route path="/book/:bookId/mindmap" element={<MindMapPage />} />
-          <Route path="/book/:bookId/reader" element={<ReaderPage />} />
+
           <Route path="/book/:bookId/study" element={<FlashcardPage />} />
 
 

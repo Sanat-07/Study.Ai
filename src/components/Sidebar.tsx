@@ -22,7 +22,7 @@ export function Sidebar() {
       {/* Header / Logo */}
       <div className="p-6">
         <div className="flex items-center gap-2">
-          <span className="text-xl font-bold text-[#0066FF]">Study.ai</span>
+          <Link to="/library" className="text-xl font-bold text-[#0066FF] hover:opacity-80 transition-opacity">Study.ai</Link>
         </div>
       </div>
 
