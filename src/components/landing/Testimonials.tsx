@@ -36,21 +36,21 @@ export function Testimonials() {
     ];
 
     return (
-        <section className="py-20 bg-[#0A0A0A] border-y border-white/5 relative overflow-hidden">
+        <section className="py-20 bg-background border-y border-border relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none" />
 
             <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <div className="text-center mb-12">
-                    <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-white">What students say</h2>
-                    <p className="text-gray-400">Real students. Real results.</p>
+                    <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4 text-foreground">What students say</h2>
+                    <p className="text-muted-foreground">Real students. Real results.</p>
                 </div>
 
                 <div className="max-w-4xl mx-auto" ref={emblaRef}>
                     <div className="flex">
                         {testimonials.map((t, i) => (
                             <div key={i} className="flex-[0_0_100%] md:flex-[0_0_50%] min-w-0 px-4">
-                                <Card className="border border-white/10 shadow-lg bg-[#111] h-full text-white">
+                                <Card className="border border-border shadow-lg bg-card h-full text-card-foreground">
                                     <CardContent className="p-8 flex flex-col h-full">
                                         <Quote className="text-primary/20 w-10 h-10 mb-4" />
                                         <p className="text-lg font-medium leading-relaxed mb-6 flex-grow">"{t.quote}"</p>

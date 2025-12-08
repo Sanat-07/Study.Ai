@@ -1,23 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const lastScrollY = useRef(0);
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
+            const currentScrollY = window.scrollY;
+
+            // Update isScrolled for glassmorphism effect
+            setIsScrolled(currentScrollY > 10);
+
+            // Hide header when scrolling down, show when scrolling up
+            if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+                setIsVisible(false);
+            } else if (currentScrollY < lastScrollY.current) {
+                setIsVisible(true);
+            }
+
+            lastScrollY.current = currentScrollY;
         };
-        window.addEventListener("scroll", handleScroll);
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "glass-nav py-3" : "bg-transparent py-5"
+                } ${isVisible ? "translate-y-0" : "-translate-y-full"
                 }`}
         >
             <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
@@ -31,13 +48,12 @@ export function Header() {
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex items-center gap-8">
                     {["Features", "How it Works", "Pricing", "Resources"].map((item) => (
-                        <Link
+                        <span
                             key={item}
-                            to={`/${item.toLowerCase().replace(/ /g, "-")}`}
-                            className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                            className="text-sm font-medium text-foreground/80 cursor-default"
                         >
                             {item}
-                        </Link>
+                        </span>
                     ))}
                 </nav>
 
@@ -49,6 +65,7 @@ export function Header() {
                     <Link to="/register">
                         <Button>Get Started</Button>
                     </Link>
+                    <ThemeToggle />
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -64,14 +81,12 @@ export function Header() {
             {isMobileMenuOpen && (
                 <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b shadow-lg p-4 flex flex-col gap-4 animate-in slide-in-from-top-2">
                     {["Features", "How it Works", "Pricing", "Resources"].map((item) => (
-                        <Link
+                        <span
                             key={item}
-                            to={`/${item.toLowerCase().replace(/ /g, "-")}`}
-                            className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors py-2"
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-sm font-medium text-foreground/80 cursor-default py-2"
                         >
                             {item}
-                        </Link>
+                        </span>
                     ))}
                     <div className="flex flex-col gap-3 mt-2 border-t pt-4">
                         <Link to="/login" className="text-center text-sm font-medium py-2">
@@ -83,4 +98,23 @@ export function Header() {
             )}
         </header>
     );
+}
+
+
+
+function ThemeToggle() {
+    const { setTheme, theme } = useTheme();
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="w-9 h-9 rounded-full border border-input bg-transparent hover:bg-accent hover:text-accent-foreground"
+        >
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+        </Button>
+    )
 }
