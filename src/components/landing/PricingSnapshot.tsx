@@ -44,7 +44,7 @@ export function PricingSnapshot() {
                     {plans.map((plan) => (
                         <div
                             key={plan.name}
-                            className={`relative rounded-2xl p-8 border bg-card flex flex-col ${plan.popular ? 'shadow-2xl scale-105 border-primary z-10' : 'shadow-lg hover:shadow-xl transition-shadow'}`}
+                            className={`relative rounded-2xl p-8 border flex flex-col ${plan.popular ? 'bg-[#111111] shadow-2xl scale-105 border-blue-500 z-10' : 'bg-[#0A0A0A] border-white/10 shadow-lg hover:shadow-xl hover:border-white/20 transition-all'}`}
                         >
                             {plan.popular && (
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">

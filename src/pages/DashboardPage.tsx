@@ -1,170 +1,137 @@
-import { FileText, ClipboardList, Network, MessageSquare, BarChart3, Library, TrendingUp, Book, Clock } from 'lucide-react';
+import { Upload, FileText, Mic, MoreHorizontal, LayoutGrid, List } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { storageService } from '@/shared/services/storage.service';
 import { useEffect, useState } from 'react';
 
 export function DashboardPage() {
-  const [stats, setStats] = useState([
-    { label: 'Books Uploaded', value: '0', icon: Book, color: 'blue' },
-    { label: 'Quizzes Taken', value: '0', icon: ClipboardList, color: 'purple' },
-    { label: 'Study Hours', value: '0', icon: Clock, color: 'blue' },
-    { label: 'Current Streak', value: '0 days', icon: TrendingUp, color: 'green' },
-  ]);
   const [userName, setUserName] = useState('Student');
+  const [recentFiles, setRecentFiles] = useState<any[]>([]);
 
   useEffect(() => {
     const user = storageService.getUser();
-    const statsData = storageService.getStats();
-
     if (user) {
       setUserName(user.fullName);
     }
-
-    setStats([
-      { label: 'Books Uploaded', value: statsData.booksUploaded.toString(), icon: Book, color: 'blue' },
-      { label: 'Quizzes Taken', value: statsData.quizzesTaken.toString(), icon: ClipboardList, color: 'purple' },
-      { label: 'Study Hours', value: statsData.studyHours.toString(), icon: Clock, color: 'blue' },
-      { label: 'Current Streak', value: `${statsData.streak} days`, icon: TrendingUp, color: 'green' },
-    ]);
-
-    // Generate recent activity from uploaded files
     const files = storageService.getFiles();
-    const activity = files.slice(0, 4).map(file => ({
-      title: `Uploaded: ${file.name}`,
-      time: file.uploadedAt,
-      type: 'upload' as const
-    }));
-    setRecentActivity(activity);
+    setRecentFiles(files);
   }, []);
 
-  const features = [
-    {
-      icon: FileText,
-      title: 'AI Summaries',
-      description: 'Get instant, comprehensive summaries of your uploaded books with key concepts highlighted',
-      color: 'blue',
-      path: '/library'
-    },
-    {
-      icon: ClipboardList,
-      title: 'Smart Quizzes',
-      description: 'Test your knowledge with AI-generated quizzes tailored to your reading material',
-      color: 'purple',
-      path: '/library'
-    },
-    {
-      icon: Network,
-      title: 'Mind Maps',
-      description: 'Visualize complex concepts with interactive mind maps generated from your books',
-      color: 'cyan',
-      path: '/library'
-    },
-    {
-      icon: MessageSquare,
-      title: 'AI Tutor',
-      description: 'Ask questions about your books and get instant, intelligent answers from our AI',
-      color: 'blue',
-      path: '/library'
-    },
-    {
-      icon: BarChart3,
-      title: 'Progress Analytics',
-      description: 'Track your learning journey with detailed analytics and performance insights',
-      color: 'green',
-      path: '/progress'
-    },
-    {
-      icon: Library,
-      title: 'Your Library',
-      description: 'Access all your uploaded books and study materials in one organized place',
-      color: 'purple',
-      path: '/library'
-    },
-  ];
-
-  const [recentActivity, setRecentActivity] = useState<Array<{ title: string; time: string; type: 'quiz' | 'mindmap' | 'upload' | 'tutor' }>>([]);
-
   return (
-    <div className="ml-64 min-h-screen p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl mb-3">Welcome back, {userName}! 👋</h1>
-          <p className="text-gray-400">
-            Here's what's happening with your learning today
+    <div className="min-h-screen bg-[#0A0A0A] text-white p-8">
+      <div className="max-w-5xl mx-auto pt-10">
+
+        {/* Top Actions */}
+        <div className="flex items-center justify-end gap-4 mb-12">
+          <button className="text-gray-400 hover:text-white transition-colors">
+            <LayoutGrid size={20} />
+          </button>
+          <button className="text-gray-400 hover:text-white transition-colors">
+            <List size={20} />
+          </button>
+        </div>
+
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Hey {userName}, what do you<br />wanna master?
+          </h1>
+          <p className="text-gray-500 text-lg">
+            Upload anything and get interactive notes, flashcards, quizzes, and more
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors">
-                <div className={`w-12 h-12 bg-${stat.color}-500/20 rounded-lg flex items-center justify-center mb-4`}>
-                  <Icon className={`w-6 h-6 text-${stat.color}-400`} />
-                </div>
-                <div className="text-3xl mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
+        {/* Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          <Link to="/upload" className="block group">
+            <div className="bg-[#111] border border-white/10 rounded-2xl p-6 h-full hover:bg-white/5 transition-all">
+              <div className="mb-4 text-gray-400 group-hover:text-white transition-colors">
+                <Upload size={24} />
               </div>
-            );
-          })}
+              <h3 className="text-lg font-semibold mb-1">Upload</h3>
+              <p className="text-sm text-gray-500">Image, file, audio, video</p>
+            </div>
+          </Link>
+
+          <button className="block text-left w-full group">
+            <div className="bg-[#111] border border-white/10 rounded-2xl p-6 h-full hover:bg-white/5 transition-all">
+              <div className="mb-4 text-gray-400 group-hover:text-white transition-colors">
+                <FileText size={24} />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">Paste</h3>
+              <p className="text-sm text-gray-500">YouTube, website, text</p>
+            </div>
+          </button>
+
+          <button className="block text-left w-full group">
+            <div className="bg-[#111] border border-white/10 rounded-2xl p-6 h-full hover:bg-white/5 transition-all">
+              <div className="mb-4 text-gray-400 group-hover:text-white transition-colors">
+                <Mic size={24} />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">Record</h3>
+              <p className="text-sm text-gray-500">Record live lecture</p>
+            </div>
+          </button>
         </div>
 
-        {/* Features Grid */}
-        <div className="mb-12">
-          <h2 className="text-2xl mb-6">Learning Tools</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Link
-                  key={index}
-                  to={feature.path}
-                  className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all group"
-                >
-                  <div className={`w-14 h-14 bg-${feature.color}-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                    <Icon className={`w-7 h-7 text-${feature.color}-400`} />
-                  </div>
-                  <h3 className="text-xl mb-2">{feature.title}</h3>
-                  <p className="text-sm text-gray-400 leading-relaxed">
-                    {feature.description}
-                  </p>
-                  <div className="mt-4 text-blue-400 text-sm flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Get Started →
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Recent Activity */}
+        {/* Study Sets */}
         <div>
-          <h2 className="text-2xl mb-6">Recent Activity</h2>
-          <div className="bg-white/5 border border-white/10 rounded-xl divide-y divide-white/10">
-            {recentActivity.length === 0 ? (
-              <div className="p-8 text-center text-gray-400">
-                <p>No recent activity yet. Start by uploading your first book!</p>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold border-l-4 border-white pl-3">All Study Sets</h2>
+            <div className="flex bg-[#111] rounded-lg p-1 border border-white/10">
+              <button className="p-1.5 rounded bg-white/10 text-white"><LayoutGrid size={16} /></button>
+              <button className="p-1.5 rounded text-gray-500 hover:text-white"><List size={16} /></button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {recentFiles.length === 0 ? (
+              <div className="col-span-full text-center py-10 text-gray-500">
+                No study sets yet. Upload a file to get started!
               </div>
             ) : (
-              recentActivity.map((activity, index) => (
-                <div key={index} className="p-5 hover:bg-white/5 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="mb-1">{activity.title}</div>
-                      <div className="text-sm text-gray-400">{activity.time}</div>
+              recentFiles.map((file, index) => (
+                <Link to={`/book/${file.id || 'default-id'}`} key={index} className="block group">
+                  <div className="bg-[#111] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-all relative h-full">
+                    <div className="absolute top-4 right-4 text-gray-500 hover:text-white cursor-pointer z-10">
+                      <MoreHorizontal size={20} />
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-xs ${activity.type === 'quiz' ? 'bg-purple-500/20 text-purple-400' :
-                      activity.type === 'mindmap' ? 'bg-cyan-500/20 text-cyan-400' :
-                        activity.type === 'upload' ? 'bg-blue-500/20 text-blue-400' :
-                          'bg-green-500/20 text-green-400'
-                      }`}>
-                      {activity.type}
+                    <h3 className="font-semibold text-lg mb-4 pr-6 truncate text-white group-hover:text-blue-400 transition-colors">{file.name}</h3>
+
+                    <div className="space-y-2">
+                      <div className="bg-[#1A1A1A] rounded px-3 py-2 text-sm text-red-400/80 border-l-2 border-red-500/50 flex items-center gap-2">
+                        <span className="w-6 inline-block text-right text-gray-500 font-mono">199</span> Unfamiliar
+                      </div>
+                      <div className="bg-[#1A1A1A] rounded px-3 py-2 text-sm text-orange-400/80 border-l-2 border-orange-500/50 flex items-center gap-2">
+                        <span className="w-6 inline-block text-right text-gray-500 font-mono">0</span> Learning
+                      </div>
+                      <div className="bg-[#1A1A1A] rounded px-3 py-2 text-sm text-blue-400/80 border-l-2 border-blue-500/50 flex items-center gap-2">
+                        <span className="w-6 inline-block text-right text-gray-500 font-mono">0</span> Familiar
+                      </div>
+                      <div className="bg-[#1A1A1A] rounded px-3 py-2 text-sm text-green-400/80 border-l-2 border-green-500/50 flex items-center gap-2">
+                        <span className="w-6 inline-block text-right text-gray-500 font-mono">0</span> Mastered
+                      </div>
                     </div>
                   </div>
+                </Link>
+              )))}
+
+            {/* Mock Item for visually checking layout if no files */}
+            {recentFiles.length === 0 && (
+              <div className="bg-[#111] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-all relative opacity-50 pointer-events-none">
+                <div className="absolute top-4 right-4 text-gray-500">
+                  <MoreHorizontal size={20} />
                 </div>
-              ))
+                <h3 className="font-semibold text-lg mb-4 pr-6">Psychology of Learning</h3>
+
+                <div className="space-y-2">
+                  <div className="bg-[#1A1A1A] rounded px-3 py-2 text-sm text-red-400/80 border-l-2 border-red-500/50 flex items-center gap-2">
+                    <span className="w-6 inline-block text-right text-gray-500 font-mono">199</span> Unfamiliar
+                  </div>
+                  <div className="bg-[#1A1A1A] rounded px-3 py-2 text-sm text-orange-400/80 border-l-2 border-orange-500/50 flex items-center gap-2">
+                    <span className="w-6 inline-block text-right text-gray-500 font-mono">0</span> Learning
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>

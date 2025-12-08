@@ -39,12 +39,12 @@ export function LibraryPage() {
   }, []);
 
   const colorClasses = {
-    blue: 'from-blue-500/30 to-blue-600/30',
-    purple: 'from-purple-500/30 to-purple-600/30',
-    green: 'from-green-500/30 to-green-600/30',
-    orange: 'from-orange-500/30 to-orange-600/30',
-    cyan: 'from-cyan-500/30 to-cyan-600/30',
-    pink: 'from-pink-500/30 to-pink-600/30',
+    blue: 'from-blue-500/20 to-blue-600/5',
+    purple: 'from-purple-500/20 to-purple-600/5',
+    green: 'from-green-500/20 to-green-600/5',
+    orange: 'from-orange-500/20 to-orange-600/5',
+    cyan: 'from-cyan-500/20 to-cyan-600/5',
+    pink: 'from-pink-500/20 to-pink-600/5',
   };
 
   const filteredBooks = books.filter(book => {
@@ -55,12 +55,12 @@ export function LibraryPage() {
   });
 
   return (
-    <div className="ml-64 min-h-screen p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#0A0A0A] text-white p-8">
+      <div className="max-w-7xl mx-auto pt-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl mb-3">My Library</h1>
-          <p className="text-gray-400">
+          <h1 className="text-4xl font-bold mb-3">My Library</h1>
+          <p className="text-gray-500">
             All your uploaded books and study materials
           </p>
         </div>
@@ -69,60 +69,60 @@ export function LibraryPage() {
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="text"
               placeholder="Search books..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-[#111] border border-white/10 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-white/20 transition-colors text-white placeholder-gray-600"
             />
           </div>
 
           {/* Filter */}
           <div className="relative">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-xl pl-11 pr-8 py-3 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+              className="bg-[#111] border border-white/10 rounded-xl pl-11 pr-8 py-3 focus:outline-none focus:border-white/20 transition-colors appearance-none text-white cursor-pointer"
             >
-              <option value="all" className="bg-gray-900">All Types</option>
-              <option value="pdf" className="bg-gray-900">PDF</option>
-              <option value="epub" className="bg-gray-900">EPUB</option>
-              <option value="docx" className="bg-gray-900">DOCX</option>
-              <option value="pptx" className="bg-gray-900">PPTX</option>
-              <option value="url" className="bg-gray-900">URL</option>
-              <option value="github" className="bg-gray-900">GitHub</option>
+              <option value="all" className="bg-[#111]">All Types</option>
+              <option value="pdf" className="bg-[#111]">PDF</option>
+              <option value="epub" className="bg-[#111]">EPUB</option>
+              <option value="docx" className="bg-[#111]">DOCX</option>
+              <option value="pptx" className="bg-[#111]">PPTX</option>
+              <option value="url" className="bg-[#111]">URL</option>
+              <option value="github" className="bg-[#111]">GitHub</option>
             </select>
           </div>
 
           {/* Sort */}
           <div className="relative">
-            <ArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <ArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-xl pl-11 pr-8 py-3 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+              className="bg-[#111] border border-white/10 rounded-xl pl-11 pr-8 py-3 focus:outline-none focus:border-white/20 transition-colors appearance-none text-white cursor-pointer"
             >
-              <option value="date" className="bg-gray-900">Date Added</option>
-              <option value="name" className="bg-gray-900">Name</option>
-              <option value="progress" className="bg-gray-900">Progress</option>
+              <option value="date" className="bg-[#111]">Date Added</option>
+              <option value="name" className="bg-[#111]">Name</option>
+              <option value="progress" className="bg-[#111]">Progress</option>
             </select>
           </div>
 
           {/* View Mode */}
-          <div className="flex gap-2 bg-white/5 border border-white/10 rounded-xl p-1">
+          <div className="flex gap-2 bg-[#111] border border-white/10 rounded-xl p-1">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-blue-500' : 'hover:bg-white/5'
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-white'
                 }`}
             >
               <Grid className="w-5 h-5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-blue-500' : 'hover:bg-white/5'
+              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-white'
                 }`}
             >
               <List className="w-5 h-5" />
@@ -137,33 +137,33 @@ export function LibraryPage() {
               <Link
                 key={book.id}
                 to={`/book/${book.id}`}
-                className="bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-blue-500/50 transition-all group"
+                className="bg-[#111] border border-white/10 rounded-xl overflow-hidden hover:bg-white/5 hover:border-white/20 transition-all group"
               >
                 {/* Thumbnail */}
-                <div className={`h-48 bg-gradient-to-br ${colorClasses[book.thumbnail as keyof typeof colorClasses]} flex items-center justify-center relative`}>
-                  <FileText className="w-20 h-20 text-white/50" />
+                <div className={`h-48 bg-gradient-to-br ${colorClasses[book.thumbnail as keyof typeof colorClasses]} flex items-center justify-center relative border-b border-white/5`}>
+                  <FileText className="w-16 h-16 text-white/20 group-hover:text-white/40 transition-colors" />
                   {book.progress === 100 && (
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-green-500 rounded-full text-xs">
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/20 rounded-full text-xs font-medium">
                       Completed
                     </div>
                   )}
-                  <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-xs uppercase">
+                  <div className="absolute top-4 right-4 px-3 py-1 bg-black/40 backdrop-blur-md rounded-full text-xs uppercase font-medium border border-white/10 text-gray-300">
                     {book.type}
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-5">
-                  <h3 className="text-lg mb-1 truncate group-hover:text-blue-400 transition-colors">{book.title}</h3>
-                  <p className="text-sm text-gray-400 mb-4">by {book.author}</p>
+                  <h3 className="text-lg font-semibold mb-1 truncate text-white group-hover:text-blue-400 transition-colors">{book.title}</h3>
+                  <p className="text-sm text-gray-500 mb-4">by {book.author}</p>
 
                   {/* Progress */}
                   <div className="mb-4">
                     <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-gray-400">Reading Progress</span>
-                      <span className="text-blue-400">{book.progress}%</span>
+                      <span className="text-gray-500">Reading Progress</span>
+                      <span className="text-blue-400 font-mono">{book.progress}%</span>
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-[#222] rounded-full h-1.5 overflow-hidden">
                       <div
                         className="bg-blue-500 h-full transition-all duration-300"
                         style={{ width: `${book.progress}%` }}
@@ -172,7 +172,7 @@ export function LibraryPage() {
                   </div>
 
                   {/* Meta */}
-                  <div className="flex items-center gap-4 text-xs text-gray-400">
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
                     <span className="flex items-center gap-1">
                       <Download className="w-3 h-3" />
                       {book.size}
@@ -193,23 +193,24 @@ export function LibraryPage() {
               <Link
                 key={book.id}
                 to={`/book/${book.id}`}
-                className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 hover:border-blue-500/50 transition-all flex items-center gap-6"
+                className="bg-[#111] border border-white/10 rounded-xl p-4 hover:bg-white/5 hover:border-white/20 transition-all flex items-center gap-6 group"
               >
                 {/* Thumbnail */}
-                <div className={`w-16 h-20 rounded-lg bg-gradient-to-br ${colorClasses[book.thumbnail as keyof typeof colorClasses]} flex items-center justify-center flex-shrink-0`}>
-                  <FileText className="w-8 h-8 text-white/50" />
+                <div className={`w-12 h-16 rounded bg-gradient-to-br ${colorClasses[book.thumbnail as keyof typeof colorClasses]} flex items-center justify-center flex-shrink-0`}>
+                  <FileText className="w-6 h-6 text-white/30" />
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-lg truncate">{book.title}</h3>
-                    <span className="px-2 py-0.5 bg-white/10 rounded text-xs uppercase flex-shrink-0">
+                  <div className="flex items-center gap-3 mb-1">
+                    <h3 className="text-lg font-medium text-white group-hover:text-blue-400 transition-colors truncate">{book.title}</h3>
+                    <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] uppercase text-gray-400 flex-shrink-0">
                       {book.type}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-400 mb-2">by {book.author}</p>
-                  <div className="flex items-center gap-4 text-xs text-gray-400">
+                  <div className="flex items-center gap-3 text-sm text-gray-500">
+                    <span>by {book.author}</span>
+                    <span>•</span>
                     <span>{book.size}</span>
                     <span>•</span>
                     <span>{book.uploadedAt}</span>
@@ -217,12 +218,9 @@ export function LibraryPage() {
                 </div>
 
                 {/* Progress */}
-                <div className="w-48 flex-shrink-0">
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-400">Progress</span>
-                    <span className="text-blue-400">{book.progress}%</span>
-                  </div>
-                  <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                <div className="w-48 flex-shrink-0 flex flex-col items-end">
+                  <span className="text-blue-400 text-sm font-mono mb-1">{book.progress}%</span>
+                  <div className="w-32 bg-[#222] rounded-full h-1.5 overflow-hidden">
                     <div
                       className="bg-blue-500 h-full transition-all duration-300"
                       style={{ width: `${book.progress}%` }}
@@ -236,17 +234,17 @@ export function LibraryPage() {
 
         {/* Empty State */}
         {filteredBooks.length === 0 && (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-10 h-10 text-gray-400" />
+          <div className="text-center py-20 bg-[#111] border border-white/5 rounded-2xl mt-8">
+            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+              <FileText className="w-10 h-10 text-gray-600" />
             </div>
-            <h3 className="text-xl mb-2">No books found</h3>
-            <p className="text-gray-400 mb-6">
-              {searchQuery ? 'Try adjusting your search or filters' : 'Upload your first book to get started'}
+            <h3 className="text-xl font-bold mb-2 text-white">No books found</h3>
+            <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+              {searchQuery ? 'Try adjusting your search or filters to find what you\'re looking for.' : 'Upload your first book to get started with your learning journey.'}
             </p>
             <Link
               to="/upload"
-              className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+              className="inline-block px-8 py-3 bg-white text-black hover:bg-gray-200 rounded-lg font-semibold transition-colors"
             >
               Upload Book
             </Link>

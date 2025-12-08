@@ -1,4 +1,4 @@
-// Link removed
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Upload, FileText, CheckCircle } from "lucide-react";
 
@@ -23,9 +23,11 @@ export function Hero() {
                             Convert your notes, PDFs, and videos into flashcards, quizzes and practice tests — instantly.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
-                            <Button size="lg" className="w-full sm:w-auto text-base font-semibold h-12 px-8">
-                                Get Started — Free
-                            </Button>
+                            <Link to="/register" className="w-full sm:w-auto">
+                                <Button size="lg" className="w-full text-base font-semibold h-12 px-8">
+                                    Get Started — Free
+                                </Button>
+                            </Link>
                             <Button size="lg" variant="outline" className="w-full sm:w-auto text-base h-12 px-8 group">
                                 See it in action
                                 <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />

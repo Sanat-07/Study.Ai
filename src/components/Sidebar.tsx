@@ -1,47 +1,65 @@
-import { Brain, Upload, LayoutDashboard, Library, BarChart3, User, Settings } from 'lucide-react';
+import { Upload, Library, BarChart3 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { storageService } from '@/shared/services/storage.service';
 
 export function Sidebar() {
   const location = useLocation();
+  const user = storageService.getUser();
 
-  const navItems = [
+  // Customizing to match the requested "Upload, Library, Progress" from user prompt text AND the mock visual style which shows "Study Sets, Podcast, Solve..."
+  // User Prompt said: "upload, library, progres, profile"
+  // Screenshot shows: "Study Sets, Podcast, Solve, Paper Grader, App"
+  // I will prioritize the USER PROMPT textual request for the items, but use the LAYOUT of the mock.
+
+  const finalNavItems = [
     { icon: Upload, label: 'Upload', path: '/upload' },
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: Library, label: 'Library', path: '/library' },
     { icon: BarChart3, label: 'Progress', path: '/progress' },
-    { icon: User, label: 'Profile', path: '/profile' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white/5 backdrop-blur-sm border-r border-white/10 overflow-y-auto">
-      <Link to="/dashboard" className="flex items-center gap-2 p-6 mb-2">
-        <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center">
-          <Brain className="w-5 h-5" />
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-[#0A0A0A] border-r border-white/5 flex flex-col z-40">
+      {/* Header / Logo */}
+      <div className="p-6">
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-bold text-[#0066FF]">Study.ai</span>
         </div>
-        <span className="text-lg">AI StudyBook</span>
-      </Link>
+      </div>
 
-      <nav className="px-3 space-y-1">
-        {navItems.map((item) => {
+      {/* Main Nav */}
+      <nav className="flex-1 px-4 space-y-1">
+        {finalNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path || location.pathname.startsWith(item.path);
 
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all group ${isActive
-                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
-                : 'text-gray-300 hover:bg-white/5 hover:text-white'
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${isActive
+                ? 'bg-white/10 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? '' : 'group-hover:scale-110 transition-transform'}`} />
+              <Icon className="w-5 h-5" />
               <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
+
+      {/* Bottom Profile */}
+      <div className="p-4 border-t border-white/5 mt-auto">
+        <Link to="/profile" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
+          <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+            {user?.fullName?.[0] || 'S'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-white truncate">{user?.fullName || 'Student'}</p>
+            <p className="text-xs text-gray-500 truncate">{user?.email || 'student@example.com'}</p>
+          </div>
+        </Link>
+      </div>
     </aside>
   );
 }

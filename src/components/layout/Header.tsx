@@ -46,7 +46,9 @@ export function Header() {
                     <Link to="/login" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
                         Log in
                     </Link>
-                    <Button>Get Started</Button>
+                    <Link to="/register">
+                        <Button>Get Started</Button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Toggle */}

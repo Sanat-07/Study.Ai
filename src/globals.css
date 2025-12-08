@@ -44,17 +44,20 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 4%;
+    /* #0A0A0A */
+    --foreground: 0 0% 100%;
+    /* White */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 7%;
+    /* #111111 */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
 
     --primary: 216 100% 50%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -86,7 +89,7 @@
 
 /* Custom Utilities */
 .glass-nav {
-  @apply bg-white/80 backdrop-blur-md border-b border-white/10;
+  @apply bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/10;
 }
 
 .hero-glow {

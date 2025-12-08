@@ -7,13 +7,13 @@ interface BookTopMenuProps {
 
 export function BookTopMenu({ bookId }: BookTopMenuProps) {
   const location = useLocation();
-  
+
   const menuItems = [
     { icon: Home, label: 'Overview', path: `/book/${bookId}` },
     { icon: FileText, label: 'Summary', path: `/book/${bookId}/summary` },
     { icon: ClipboardList, label: 'Quiz', path: `/book/${bookId}/quiz` },
     { icon: Network, label: 'Mind Map', path: `/book/${bookId}/mindmap` },
-    { icon: MessageSquare, label: 'AI Chat', path: `/book/${bookId}/chat` },
+    // { icon: MessageSquare, label: 'AI Chat', path: `/book/${bookId}/chat` },
     { icon: BookOpen, label: 'Reader', path: `/book/${bookId}/reader` },
   ];
 
@@ -23,16 +23,15 @@ export function BookTopMenu({ bookId }: BookTopMenuProps) {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          
+
           return (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-2 px-4 py-4 border-b-2 transition-all whitespace-nowrap ${
-                isActive 
-                  ? 'border-blue-500 text-white' 
+              className={`flex items-center gap-2 px-4 py-4 border-b-2 transition-all whitespace-nowrap ${isActive
+                  ? 'border-blue-500 text-white'
                   : 'border-transparent text-gray-400 hover:text-white hover:border-white/20'
-              }`}
+                }`}
             >
               <Icon className="w-4 h-4" />
               <span className="text-sm">{item.label}</span>

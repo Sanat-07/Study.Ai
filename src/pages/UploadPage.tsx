@@ -161,15 +161,17 @@ export function UploadPage() {
   };
 
   return (
-    <div className="ml-64 min-h-screen p-8 bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-900/20">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen p-8 bg-[#0A0A0A] text-white">
+      <div className="max-w-6xl mx-auto pt-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-3">
-            <Sparkles className="w-12 h-12 text-blue-400" />
-            Upload Resources
+          <h1 className="text-4xl font-bold mb-3 flex items-center gap-3">
+            <Sparkles className="w-8 h-8 text-[#0066FF]" />
+            <span className="text-[#0066FF]">
+              Upload Resources
+            </span>
           </h1>
-          <p className="text-gray-400 text-lg">Upload books, documents, or import content from URLs and GitHub repositories</p>
+          <p className="text-gray-500 text-lg">Upload books, documents, or import content from URLs and GitHub repositories</p>
         </div>
 
         {/* Tabs */}
@@ -177,7 +179,7 @@ export function UploadPage() {
           <button
             onClick={() => setActiveTab('files')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'files'
-              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+              ? 'bg-[#0066FF] text-white shadow-lg shadow-blue-500/30'
               : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
               }`}
           >
@@ -187,7 +189,7 @@ export function UploadPage() {
           <button
             onClick={() => setActiveTab('url')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'url'
-              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+              ? 'bg-[#0066FF] text-white shadow-lg shadow-blue-500/30'
               : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
               }`}
           >
@@ -197,7 +199,7 @@ export function UploadPage() {
           <button
             onClick={() => setActiveTab('github')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${activeTab === 'github'
-              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30'
+              ? 'bg-[#0066FF] text-white shadow-lg shadow-blue-500/30'
               : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
               }`}
           >
@@ -214,12 +216,12 @@ export function UploadPage() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all ${isDragging
-                ? 'border-blue-500 bg-blue-500/10 scale-105'
-                : 'border-white/20 hover:border-blue-500/50 hover:bg-white/5'
+                ? 'border-[#0066FF] bg-[#0066FF]/10 scale-105'
+                : 'border-white/20 hover:border-[#0066FF]/50 hover:bg-white/5'
                 }`}
             >
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Upload className={`w-10 h-10 text-blue-400 ${isDragging ? 'animate-bounce' : ''}`} />
+              <div className="w-20 h-20 bg-[#0066FF]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Upload className={`w-10 h-10 text-[#0066FF] ${isDragging ? 'animate-bounce' : ''}`} />
               </div>
               <h3 className="text-2xl font-bold mb-2">Drag & drop your files here</h3>
               <p className="text-gray-400 mb-6">or click to browse from your computer</p>
@@ -232,7 +234,7 @@ export function UploadPage() {
               />
               <label
                 htmlFor="file-upload"
-                className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-semibold cursor-pointer transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
+                className="inline-block px-8 py-4 bg-[#0066FF] hover:bg-blue-600 rounded-xl font-semibold cursor-pointer transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
               >
                 <Zap className="w-5 h-5 inline mr-2" />
                 Browse Files
@@ -250,8 +252,8 @@ export function UploadPage() {
 
           {activeTab === 'url' && (
             <div className="max-w-2xl mx-auto">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <LinkIcon className="w-10 h-10 text-blue-400" />
+              <div className="w-20 h-20 bg-[#0066FF]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <LinkIcon className="w-10 h-10 text-[#0066FF]" />
               </div>
               <h3 className="text-2xl font-bold mb-2 text-center">Import from URL</h3>
               <p className="text-gray-400 mb-6 text-center">Paste a link to a document or article</p>
@@ -266,7 +268,7 @@ export function UploadPage() {
                 />
                 <button
                   onClick={handleUrlUpload}
-                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
+                  className="px-8 py-4 bg-[#0066FF] hover:bg-blue-600 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
                 >
                   Import
                 </button>
@@ -276,8 +278,8 @@ export function UploadPage() {
 
           {activeTab === 'github' && (
             <div className="max-w-2xl mx-auto">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Code className="w-10 h-10 text-blue-400" />
+              <div className="w-20 h-20 bg-[#0066FF]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Code className="w-10 h-10 text-[#0066FF]" />
               </div>
               <h3 className="text-2xl font-bold mb-2 text-center">Import from GitHub</h3>
               <p className="text-gray-400 mb-6 text-center">Enter a GitHub repository URL</p>
@@ -292,7 +294,7 @@ export function UploadPage() {
                 />
                 <button
                   onClick={handleGithubUpload}
-                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
+                  className="px-8 py-4 bg-[#0066FF] hover:bg-blue-600 rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105"
                 >
                   Import
                 </button>
