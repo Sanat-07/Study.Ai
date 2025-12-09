@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { ZoomIn, ZoomOut, Maximize2, Download, Table as TableIcon, LayoutGrid, Trash2, Plus, Save, X } from 'lucide-react';
-import { StudyHeader } from '@/components/study/StudyHeader';
+import React, { useState } from 'react';
+import { Download, Maximize, Plus, Minus } from 'lucide-react';
+import PageTransition from '../components/PageTransition';
 
 interface Node {
   id: string;
@@ -9,379 +9,211 @@ interface Node {
   y: number;
   color: string;
   children?: string[];
-  expanded?: boolean;
+  type?: 'root' | 'main' | 'sub';
 }
 
-export function MindMapPage() {
-  const [viewMode, setViewMode] = useState<'map' | 'table'>('map');
-  const [zoom, setZoom] = useState(1);
+const initialNodes: Node[] = [
+  // Root
+  { id: 'root', label: 'Introduction to Psychology', x: 450, y: 350, color: '#3b82f6', type: 'root', children: ['hist', 'res', 'app', 'persp'] },
 
-  const [nodes, setNodes] = useState<Node[]>([
-    { id: 'root', label: 'Introduction to\nPsychology', x: 400, y: 300, color: '#3b82f6', expanded: true },
-    { id: 'history', label: 'History &\nFoundations', x: 200, y: 150, color: '#8b5cf6', expanded: true },
-    { id: 'methods', label: 'Research\nMethods', x: 200, y: 300, color: '#06b6d4', expanded: true },
-    { id: 'perspectives', label: 'Major\nPerspectives', x: 200, y: 450, color: '#10b981', expanded: true },
-    { id: 'applications', label: 'Applications', x: 600, y: 300, color: '#f59e0b', expanded: true },
+  // Level 1
+  { id: 'hist', label: 'History & Foundations', x: 250, y: 150, color: '#8b5cf6', type: 'main', children: ['phil', 'wundt'] },
+  { id: 'res', label: 'Research Methods', x: 250, y: 350, color: '#06b6d4', type: 'main' },
+  { id: 'app', label: 'Applications', x: 650, y: 350, color: '#f59e0b', type: 'main', children: ['clin', 'edu', 'org'] },
+  { id: 'persp', label: 'Major Perspectives', x: 250, y: 550, color: '#10b981', type: 'main', children: ['bio', 'cog', 'beh'] },
 
-    // Children nodes
-    { id: 'philosophical', label: 'Philosophical\nRoots', x: 50, y: 100, color: '#8b5cf6' },
-    { id: 'wundt', label: 'Wilhelm\nWundt', x: 50, y: 180, color: '#8b5cf6' },
+  // Level 2 (Left Side)
+  { id: 'phil', label: 'Philosophical Roots', x: 100, y: 100, color: '#8b5cf6', type: 'sub' },
+  { id: 'wundt', label: 'Wilhelm Wundt', x: 100, y: 200, color: '#8b5cf6', type: 'sub' },
 
-    { id: 'experimental', label: 'Experimental', x: 50, y: 280, color: '#06b6d4' },
-    { id: 'observational', label: 'Observational', x: 50, y: 340, color: '#06b6d4' },
+  // Level 2 (Right Side)
+  { id: 'clin', label: 'Clinical', x: 800, y: 250, color: '#f59e0b', type: 'sub' },
+  { id: 'edu', label: 'Educational', x: 800, y: 350, color: '#f59e0b', type: 'sub' },
+  { id: 'org', label: 'Organizational', x: 800, y: 450, color: '#f59e0b', type: 'sub' },
 
-    { id: 'biological', label: 'Biological', x: 50, y: 420, color: '#10b981' },
-    { id: 'cognitive', label: 'Cognitive', x: 50, y: 470, color: '#10b981' },
-    { id: 'behavioral', label: 'Behavioral', x: 50, y: 520, color: '#10b981' },
+  // Level 2 (Bottom Left)
+  { id: 'bio', label: 'Biological', x: 80, y: 480, color: '#10b981', type: 'sub' },
+  { id: 'cog', label: 'Cognitive', x: 80, y: 560, color: '#10b981', type: 'sub' },
+  { id: 'beh', label: 'Behavioral', x: 80, y: 640, color: '#10b981', type: 'sub' },
 
-    { id: 'clinical', label: 'Clinical', x: 750, y: 250, color: '#f59e0b' },
-    { id: 'educational', label: 'Educational', x: 750, y: 310, color: '#f59e0b' },
-    { id: 'organizational', label: 'Organizational', x: 750, y: 370, color: '#f59e0b' },
-  ]);
+  // Extra nodes for Research methods (to match density of screenshot)
+  { id: 'exp', label: 'Experimental', x: 80, y: 300, color: '#06b6d4', type: 'sub' },
+  { id: 'obs', label: 'Observational', x: 80, y: 380, color: '#06b6d4', type: 'sub' },
+];
 
-  // Edits state
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<Partial<Node>>({});
+// Add connections manually for extra nodes
+const allNodes = [...initialNodes];
+// Connect Research Methods to its children
+const resNode = allNodes.find(n => n.id === 'res');
+if (resNode) resNode.children = ['exp', 'obs'];
 
-  const connections = [
-    { from: 'root', to: 'history' },
-    { from: 'root', to: 'methods' },
-    { from: 'root', to: 'perspectives' },
-    { from: 'root', to: 'applications' },
-    { from: 'history', to: 'philosophical' },
-    { from: 'history', to: 'wundt' },
-    { from: 'methods', to: 'experimental' },
-    { from: 'methods', to: 'observational' },
-    { from: 'perspectives', to: 'biological' },
-    { from: 'perspectives', to: 'cognitive' },
-    { from: 'perspectives', to: 'behavioral' },
-    { from: 'applications', to: 'clinical' },
-    { from: 'applications', to: 'educational' },
-    { from: 'applications', to: 'organizational' },
-  ];
 
-  // CRUD Operations
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this node?')) {
-      setNodes(nodes.filter(n => n.id !== id));
+const MindMapPage: React.FC = () => {
+  const [scale, setScale] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Helper to draw bezier curves
+  const drawPath = (start: Node, end: Node) => {
+    const dx = end.x - start.x;
+    // Calculate control points for smooth curves
+    const controlPoint1 = { x: start.x + dx * 0.5, y: start.y };
+    const controlPoint2 = { x: end.x - dx * 0.5, y: end.y };
+    return `M ${start.x} ${start.y} C ${controlPoint1.x} ${controlPoint1.y}, ${controlPoint2.x} ${controlPoint2.y}, ${end.x} ${end.y}`;
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) {
+      setOffset({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
     }
   };
 
-  const handleAddNode = () => {
-    const newNode: Node = {
-      id: `node-${Date.now()}`,
-      label: 'New Node',
-      x: 400,
-      y: 300,
-      color: '#ffffff',
-      expanded: true
-    };
-    setNodes([...nodes, newNode]);
-    // Automatically start editing the new node
-    setEditingId(newNode.id);
-    setEditForm(newNode);
-  };
-
-  const startEditing = (node: Node) => {
-    setEditingId(node.id);
-    setEditForm({ ...node });
-  };
-
-  const saveEdit = () => {
-    if (editingId && editForm) {
-      setNodes(nodes.map(n => n.id === editingId ? { ...n, ...editForm } as Node : n));
-      setEditingId(null);
-      setEditForm({});
-    }
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditForm({});
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-300" style={{ backgroundColor: '#0A0A0A' }}>
-      <StudyHeader
-        title="Mind Map"
-        progress="Introduction to Psychology - Chapter 1"
-        onBack={() => window.history.back()}
-      />
-
-      {/* Control Bar */}
-      <div className="p-4 border-b border-white/10 flex items-center justify-between sticky top-[65px] bg-[#0A0A0A] z-10">
-
-        {/* Left: View Toggles & Add */}
-        <div className="flex items-center gap-3">
-          <div className="flex bg-white/5 p-1 rounded-lg border border-white/10">
-            <button
-              onClick={() => setViewMode('map')}
-              className={`px-3 py-1.5 rounded flex items-center gap-2 text-sm transition-colors ${viewMode === 'map' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
-            >
-              <LayoutGrid size={16} />
-              Map
-            </button>
-            <button
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded flex items-center gap-2 text-sm transition-colors ${viewMode === 'table' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
-            >
-              <TableIcon size={16} />
-              Table
-            </button>
-          </div>
-
-          <button
-            onClick={handleAddNode}
-            className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-white text-sm flex items-center gap-2 transition-colors font-medium ml-2"
-          >
-            <Plus size={16} />
-            Add Node
-          </button>
+    <PageTransition className="h-[calc(100vh-100px)] flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6 px-6 pt-2">
+        <div>
+          <h2 className="text-xl font-bold font-heading text-white">Mind Map</h2>
+          <p className="text-sm text-gray-400 mt-1">Introduction to Psychology - Chapter 1</p>
         </div>
-
-        {/* Right: Zoom & Export */}
-        <div className="flex items-center gap-3">
-          {viewMode === 'map' && (
-            <>
-              <button
-                onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-white"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </button>
-              <span className="px-4 py-2 bg-white/5 rounded-lg min-w-[80px] text-center text-white font-mono">
-                {Math.round(zoom * 100)}%
-              </span>
-              <button
-                onClick={() => setZoom(Math.min(2, zoom + 0.1))}
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-white"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </button>
-              <button className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-white">
-                <Maximize2 className="w-4 h-4" />
-                Fit
-              </button>
-            </>
-          )}
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors flex items-center gap-2 text-white shadow-lg shadow-blue-900/20">
-            <Download className="w-4 h-4" />
-            Export PNG
+        <div className="flex gap-4">
+          <div className="flex bg-[#111] rounded-lg border border-white/10 p-1">
+            <button className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded transition-colors shadow-lg shadow-blue-500/20">Map</button>
+            <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">Table</button>
+          </div>
+          <button className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-green-500/20">
+            <Plus size={18} /> Add Node
           </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 relative bg-[#0A0A0A] overflow-hidden">
+      {/* Main Canvas Area */}
+      <div className="flex-1 bg-[#050505] border border-white/5 mx-6 mb-6 rounded-3xl relative overflow-hidden shadow-2xl">
 
-        {viewMode === 'map' ? (
-          /* MAP VIEW */
-          <div className="w-full h-full overflow-auto cursor-grab active:cursor-grabbing">
-            <div
-              className="min-w-full min-h-full flex items-center justify-center p-20"
-              style={{ transform: `scale(${zoom})`, transformOrigin: 'center top' }}
-            >
-              <svg
-                width="1000"
-                height="800"
-                viewBox="0 0 1000 800"
-                className="overflow-visible"
-              >
-                {/* Connections */}
-                {connections.map((conn, index) => {
-                  const fromNode = nodes.find(n => n.id === conn.from);
-                  const toNode = nodes.find(n => n.id === conn.to);
-                  if (!fromNode || !toNode) return null;
+        {/* Floating Toolbar */}
+        <div className="absolute top-6 right-6 flex items-center gap-2 z-20">
+          <button onClick={() => setScale(s => Math.max(0.5, s - 0.1))} className="p-2.5 bg-[#111] border border-white/10 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
+            <Minus size={20} />
+          </button>
+          <div className="px-4 py-2.5 bg-[#111] border border-white/10 rounded-xl font-mono text-sm font-bold text-white min-w-[4rem] text-center">
+            {Math.round(scale * 100)}%
+          </div>
+          <button onClick={() => setScale(s => Math.min(2, s + 0.1))} className="p-2.5 bg-[#111] border border-white/10 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
+            <Plus size={20} />
+          </button>
+          <div className="w-px h-8 bg-white/10 mx-2"></div>
+          <button className="p-2.5 bg-[#111] border border-white/10 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
+            <Maximize size={20} />
+          </button>
+          <button className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-white flex gap-2 items-center text-sm font-bold shadow-lg shadow-blue-500/20 transition-all ml-2">
+            <Download size={18} /> Export PNG
+          </button>
+        </div>
 
-                  const midY = (fromNode.y + toNode.y) / 2;
-                  const dx = toNode.x - fromNode.x;
-                  const curve = Math.abs(dx) * 0.5;
-
-                  return (
-                    <g key={index}>
-                      <path
-                        d={`M ${fromNode.x} ${fromNode.y} Q ${fromNode.x + (dx > 0 ? curve : -curve)} ${midY}, ${toNode.x} ${toNode.y}`}
-                        stroke="#3b82f6"
-                        strokeWidth="2"
-                        strokeOpacity="0.3"
-                        fill="none"
-                      />
-                    </g>
-                  );
-                })}
-
-                {/* Nodes */}
-                {nodes.map((node) => {
-                  const isRoot = node.id === 'root';
-                  const size = isRoot ? 140 : 120;
-                  const fontSize = isRoot ? '16' : '13';
-
-                  return (
-                    <g key={node.id} className="cursor-pointer hover:opacity-90 transition-opacity" onClick={() => startEditing(node)}>
-                      {/* Node circle */}
-                      <circle
-                        cx={node.x}
-                        cy={node.y}
-                        r={size / 2}
-                        fill={node.color}
-                        fillOpacity="0.2"
-                        stroke={node.color}
-                        strokeWidth="2"
-                      />
-
-                      {/* Text */}
-                      <text
-                        x={node.x}
-                        y={node.y}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fill="white"
-                        fontSize={fontSize}
-                        fontWeight={isRoot ? 'bold' : 'normal'}
-                        style={{ pointerEvents: 'none' }}
-                      >
-                        {node.label.split('\n').map((line, i) => (
-                          <tspan key={i} x={node.x} dy={i === 0 ? 0 : '1.2em'}>
-                            {line}
-                          </tspan>
-                        ))}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
+        {/* Categories Legend */}
+        <div className="absolute top-24 right-6 bg-[#111]/90 backdrop-blur-md border border-white/10 rounded-2xl p-5 z-20 w-48 shadow-xl">
+          <h4 className="text-xs font-bold uppercase text-gray-500 tracking-wider mb-4">CATEGORIES</h4>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+              <span className="text-sm text-gray-300 font-medium">Main Topic</span>
             </div>
           </div>
-        ) : (
-          /* TABLE VIEW */
-          <div className="w-full h-full p-8 overflow-auto">
-            <div className="max-w-6xl mx-auto bg-[#111] rounded-xl border border-white/10 overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-white/5 border-b border-white/10 text-gray-400 text-sm">
-                    <th className="p-4 font-medium">Node Label</th>
-                    <th className="p-4 font-medium">Color</th>
-                    <th className="p-4 font-medium">X Position</th>
-                    <th className="p-4 font-medium">Y Position</th>
-                    <th className="p-4 font-medium text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {nodes.map(node => (
-                    <tr key={node.id} className="hover:bg-white/5 transition-colors group">
-                      {editingId === node.id ? (
-                        <>
-                          <td className="p-4">
-                            <input
-                              type="text"
-                              value={editForm.label || ''}
-                              onChange={e => setEditForm({ ...editForm, label: e.target.value })}
-                              className="w-full bg-[#222] border border-white/20 rounded px-2 py-1 text-white focus:outline-none focus:border-blue-500"
-                            />
-                          </td>
-                          <td className="p-4">
-                            <input
-                              type="color"
-                              value={editForm.color || '#000000'}
-                              onChange={e => setEditForm({ ...editForm, color: e.target.value })}
-                              className="bg-transparent border-none w-8 h-8 cursor-pointer"
-                            />
-                          </td>
-                          <td className="p-4">
-                            <input
-                              type="number"
-                              value={editForm.x || 0}
-                              onChange={e => setEditForm({ ...editForm, x: Number(e.target.value) })}
-                              className="w-24 bg-[#222] border border-white/20 rounded px-2 py-1 text-white focus:outline-none focus:border-blue-500"
-                            />
-                          </td>
-                          <td className="p-4">
-                            <input
-                              type="number"
-                              value={editForm.y || 0}
-                              onChange={e => setEditForm({ ...editForm, y: Number(e.target.value) })}
-                              className="w-24 bg-[#222] border border-white/20 rounded px-2 py-1 text-white focus:outline-none focus:border-blue-500"
-                            />
-                          </td>
-                          <td className="p-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button onClick={saveEdit} className="p-2 text-green-400 hover:bg-green-500/10 rounded-lg transition-colors" title="Save">
-                                <Save size={18} />
-                              </button>
-                              <button onClick={cancelEdit} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Cancel">
-                                <X size={18} />
-                              </button>
-                            </div>
-                          </td>
-                        </>
-                      ) : (
-                        <>
-                          <td className="p-4 font-medium text-white">
-                            <div className="whitespace-pre-line">{node.label}</div>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              <div className="w-4 h-4 rounded-full border border-white/20" style={{ backgroundColor: node.color }}></div>
-                              <span className="text-gray-500 text-xs font-mono">{node.color}</span>
-                            </div>
-                          </td>
-                          <td className="p-4 text-gray-400 font-mono">{node.x}</td>
-                          <td className="p-4 text-gray-400 font-mono">{node.y}</td>
-                          <td className="p-4 text-right">
-                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => startEditing(node)}
-                                className="px-3 py-1.5 text-sm bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-md transition-colors"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDelete(node.id)}
-                                className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                                title="Delete"
-                              >
-                                <Trash2 size={18} />
-                              </button>
-                            </div>
-                          </td>
-                        </>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {nodes.length === 0 && (
-                <div className="p-12 text-center text-gray-500">
-                  No nodes found. Click "Add Node" to create one.
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+        </div>
 
-        {/* Legend (Only in Map View) */}
-        {viewMode === 'map' && (
-          <>
-            <div className="absolute bottom-6 left-6 bg-black/50 backdrop-blur-sm border border-white/10 rounded-lg p-4 max-w-xs pointer-events-none">
-              <h3 className="text-sm font-bold text-white mb-2">Interactive Mind Map</h3>
-              <p className="text-xs text-gray-400">
-                Click on nodes to edit or drag (dragging not implemented). Switch to Table view for full control.
-              </p>
-            </div>
+        {/* Canvas */}
+        <div
+          className="w-full h-full cursor-grab active:cursor-grabbing"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          <svg className="w-full h-full" viewBox="0 0 900 700">
+            <g transform={`translate(${offset.x}, ${offset.y}) scale(${scale})`} style={{ transformOrigin: 'center' }}>
 
-            <div className="absolute top-6 right-6 bg-black/50 backdrop-blur-sm border border-white/10 rounded-lg p-4 pointer-events-none">
-              <h3 className="text-sm font-bold text-white mb-3">Categories</h3>
-              <div className="space-y-2 text-xs text-gray-300">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span>Main Topic</span>
-                </div>
-                {/* ... other legend items ... */}
-              </div>
-            </div>
-          </>
-        )}
+              {/* Connections (Background) */}
+              {allNodes.map(node => (
+                node.children?.map(childId => {
+                  const childNode = allNodes.find(n => n.id === childId);
+                  if (!childNode) return null;
+                  return (
+                    <path
+                      key={`${node.id}-${childId}`}
+                      d={drawPath(node, childNode)}
+                      fill="none"
+                      stroke={node.color}
+                      strokeWidth="2"
+                      opacity="0.4"
+                      className="transition-all duration-300"
+                    />
+                  );
+                })
+              ))}
+
+              {/* Nodes */}
+              {allNodes.map(node => (
+                <g key={node.id} transform={`translate(${node.x}, ${node.y})`} className="group cursor-pointer">
+                  {/* Outer Glow */}
+                  <circle
+                    r={node.type === 'root' ? 55 : 45}
+                    fill="transparent"
+                    stroke={node.color}
+                    strokeWidth="1"
+                    className="opacity-0 group-hover:opacity-100 transition-all duration-300 scale-110"
+                  />
+
+                  {/* Main Circle */}
+                  <circle
+                    r={node.type === 'root' ? 45 : 35}
+                    fill="#0A0A0A"
+                    stroke={node.color}
+                    strokeWidth="2"
+                    className="transition-all duration-300 group-hover:stroke-[3px] shadow-2xl"
+                  />
+
+                  {/* Inner Tint */}
+                  <circle
+                    r={node.type === 'root' ? 45 : 35}
+                    fill={node.color}
+                    opacity="0.05"
+                    className="group-hover:opacity-10 transition-opacity"
+                  />
+
+                  {/* Text Label */}
+                  <foreignObject
+                    x={node.type === 'root' ? -55 : -45}
+                    y={node.type === 'root' ? -55 : -45}
+                    width={node.type === 'root' ? 110 : 90}
+                    height={node.type === 'root' ? 110 : 90}
+                  >
+                    <div className="w-full h-full flex items-center justify-center text-center p-2">
+                      <p className={`font-medium leading-tight text-white/90 select-none ${node.type === 'root' ? 'text-xs font-bold' : 'text-[10px]'}`}>
+                        {node.label}
+                      </p>
+                    </div>
+                  </foreignObject>
+                </g>
+              ))}
+            </g>
+          </svg>
+        </div>
       </div>
-    </div>
+    </PageTransition>
   );
-}
+};
+
+export default MindMapPage;

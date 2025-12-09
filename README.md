@@ -276,7 +276,7 @@ This is a private project. For collaboration inquiries:
 
 ---
 
-### ⭐ Star us on GitHub if this helps you study smarter!
+### ⭐ Star us on GitHub if this helps you rter!
 
 </div>
 
