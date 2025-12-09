@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📚 Study.ai
+<img src="src/assets/logo.svg" alt="Study.ai" height="50" />
 
 ### AI-Powered Learning Platform for Modern Students
 
@@ -276,7 +276,7 @@ This is a private project. For collaboration inquiries:
 
 ---
 
-### ⭐ Star us on GitHub if this helps you study smarter!
+### ⭐ Star us on GitHub if this helps you rter!
 
 </div>
 

@@ -1,0 +1,18 @@
+<svg width="220" height="50" viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&amp;display=swap');
+    </style>
+  </defs>
+  <!-- Icon: Rounded Square Blue -->
+  <rect x="0" y="0" width="50" height="50" rx="12" fill="#0066FF"/>
+  
+  <!-- Sparkles (Diamond/Star shape similar to Lucide) -->
+  <path d="M25 10L27 18L35 20L27 22L25 30L23 22L15 20L23 18L25 10Z" fill="white"/>
+  <path d="M10 32L11 36L15 37L11 38L10 42L9 38L5 37L9 36L10 32Z" fill="white"/>
+  <path d="M40 8L41 11L44 12L41 13L40 16L39 13L36 12L39 11L40 8Z" fill="white"/>
+
+  <!-- Text: Study (Dark Slate) .ai (Blue) -->
+  <!-- Using sans-serif fallback if Inter is not loaded -->
+  <text x="62" y="38" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="800" font-size="32" fill="#0F172A" letter-spacing="-1">Study<tspan fill="#0066FF">.ai</tspan></text>
+</svg>

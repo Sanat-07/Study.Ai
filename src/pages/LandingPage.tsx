@@ -2,9 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/landing/Hero";
 import { TrustRow } from "@/components/landing/TrustRow";
-import { FeaturesSnapshot } from "@/components/landing/FeaturesSnapshot";
-import { HowItWorks } from "@/components/landing/HowItWorks";
-import { FeatureDeepDive } from "@/components/landing/FeatureDeepDive";
+
 import { Testimonials } from "@/components/landing/Testimonials";
 import { PricingSnapshot } from "@/components/landing/PricingSnapshot";
 import { ComparisonSection } from "@/components/landing/ComparisonSection";
@@ -17,9 +15,7 @@ export function LandingPage() {
             <main>
                 <Hero />
                 <TrustRow />
-                <FeaturesSnapshot />
-                <HowItWorks />
-                <FeatureDeepDive />
+
                 <Testimonials />
                 <ComparisonSection />
                 <PricingSnapshot />
