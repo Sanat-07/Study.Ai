@@ -2,6 +2,10 @@
 
 <img src="src/assets/logo.svg" alt="Study.ai" height="50" />
 
+[![Star this repo](https://img.shields.io/github/stars/Sanat-07/ZamanBank?style=social)](https://github.com/Sanat-07/ZamanBank)
+[![Follow](https://img.shields.io/github/followers/Sanat-07?style=social)](https://github.com/Sanat-07)
+
+
 ### AI-Powered Learning Platform for Modern Students
 
 [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
