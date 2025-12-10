@@ -117,7 +117,7 @@ Study.Ai/
 │   │   ├── landing/             # Landing page sections
 │   │   ├── layout/              # Header, Footer
 │   │   ├── study/               # Study mode components
-│   │   └── theme-provider.tsx  # Dark/Light theme manager
+│   │   └── theme-provider.tsx   # Dark/Light theme manager
 │   │
 │   ├── pages/
 │   │   ├── LandingPage.tsx     # Marketing page
