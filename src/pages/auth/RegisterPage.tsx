@@ -1,13 +1,28 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Github } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Github, BarChart3, Clock, CheckCircle2, TrendingUp, Sparkles } from 'lucide-react';
 import { googleLogin } from "@/shared/api/endpoints/auth.api.ts";
 import { setAuthToken } from "@/shared/api/axiosInstance.ts";
 import Cookies from "js-cookie";
 import { useGoogleLogin } from '@react-oauth/google';
 import { storageService } from '@/shared/services/storage.service';
-import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { motion } from "framer-motion";
+import { Area, AreaChart, ResponsiveContainer, Tooltip } from "recharts";
+import logo from "@/assets/logos/logo.png";
+
+const MOCK_CHART_DATA = [
+    { name: 'Mon', hours: 2.5 },
+    { name: 'Tue', hours: 4.2 },
+    { name: 'Wed', hours: 3.8 },
+    { name: 'Thu', hours: 5.5 },
+    { name: 'Fri', hours: 4.0 },
+    { name: 'Sat', hours: 6.2 },
+    { name: 'Sun', hours: 5.1 },
+];
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -16,6 +31,7 @@ export function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [agreed, setAgreed] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,12 +39,16 @@ export function RegisterPage() {
             alert('Please agree to the Terms of Service and Privacy Policy');
             return;
         }
+        setIsLoading(true);
         // Mock signup - no backend needed
-        const mockToken = 'mock_token_' + Date.now();
-        setAuthToken(mockToken);
-        Cookies.set('token', mockToken);
-        storageService.saveUser({ id: '1', email, fullName: fullname });
-        navigate('/dashboard');
+        setTimeout(() => {
+            const mockToken = 'mock_token_' + Date.now();
+            setAuthToken(mockToken);
+            Cookies.set('token', mockToken);
+            storageService.saveUser({ id: '1', email, fullName: fullname });
+            setIsLoading(false);
+            navigate('/dashboard');
+        }, 800);
     };
 
     const handleGoogleLogin = useGoogleLogin({
@@ -58,140 +78,229 @@ export function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background font-body text-foreground selection:bg-primary/20 selection:text-primary overflow-hidden relative">
-            <Header />
-
-            {/* Background gradients */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none -z-10">
-                <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50" />
-                <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl opacity-50" />
-            </div>
-
-            <div className="flex items-center justify-center min-h-screen pt-20 px-4">
-                <div className="w-full max-w-md">
-                    <div className="text-center mb-8">
-                        <h1 className="font-heading font-bold text-4xl mb-2 tracking-tight">Create Account</h1>
-                        <p className="text-muted-foreground text-lg">Start your learning journey today</p>
+        <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 font-sans bg-background">
+            {/* Left Side - Register Form */}
+            <div className="flex flex-col justify-center items-center p-6 sm:p-12 lg:p-16 relative">
+                <div className="w-full max-w-md space-y-8">
+                    {/* Header */}
+                    <div className="space-y-2 text-center lg:text-left">
+                        <div className="flex justify-center lg:justify-start items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-[#0066FF] flex items-center justify-center shadow-lg shadow-blue-500/30">
+                                <Sparkles size={18} className="text-white" />
+                            </div>
+                            <span className="text-2xl font-bold tracking-tight text-[#0066FF]">Study AI</span>
+                        </div>
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">Create Account</h1>
+                        <p className="text-muted-foreground text-base">Start your learning journey today</p>
                     </div>
 
-                    <div className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-                        <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-foreground/80">Full Name</label>
+                                <Label htmlFor="fullname">Full Name</Label>
                                 <div className="relative">
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                                        <User className="w-5 h-5" />
-                                    </div>
-                                    <input
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <Input
+                                        id="fullname"
                                         type="text"
-                                        required
+                                        placeholder="John Doe"
+                                        className="pl-10 h-12 bg-gray-50 border-input/60 focus:bg-white text-gray-900 transition-all placeholder:text-muted-foreground/50"
                                         value={fullname}
                                         onChange={(e) => setFullname(e.target.value)}
-                                        placeholder="John Doe"
-                                        className="w-full pl-11 pr-4 py-3 bg-muted/50 border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                        required
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-foreground/80">Email</label>
+                                <Label htmlFor="email">Email</Label>
                                 <div className="relative">
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                                        <Mail className="w-5 h-5" />
-                                    </div>
-                                    <input
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <Input
+                                        id="email"
                                         type="email"
-                                        required
+                                        placeholder="you@example.com"
+                                        className="pl-10 h-12 bg-gray-50 border-input/60 focus:bg-white text-gray-900 transition-all placeholder:text-muted-foreground/50"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="you@example.com"
-                                        className="w-full pl-11 pr-4 py-3 bg-muted/50 border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                        required
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-foreground/80">Password</label>
+                                <Label htmlFor="password">Password</Label>
                                 <div className="relative">
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                                        <Lock className="w-5 h-5" />
-                                    </div>
-                                    <input
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <Input
+                                        id="password"
                                         type={showPassword ? "text" : "password"}
-                                        required
+                                        placeholder="••••••••"
+                                        className="pl-10 pr-10 h-12 bg-gray-50 border-input/60 focus:bg-white text-gray-900 transition-all placeholder:text-muted-foreground/50"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="••••••••"
-                                        className="w-full pl-11 pr-12 py-3 bg-muted/50 border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                        required
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                                     >
-                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="flex items-start gap-2">
-                                <input
-                                    type="checkbox"
-                                    required
-                                    checked={agreed}
-                                    onChange={(e) => setAgreed(e.target.checked)}
-                                    className="mt-1 w-4 h-4 rounded border-input bg-background/50 text-primary focus:ring-primary focus:ring-offset-background"
-                                />
-                                <span className="text-sm text-muted-foreground">
-                                    I agree to the <a href="#" className="text-primary hover:text-primary/80">Terms of Service</a> and <a href="#" className="text-primary hover:text-primary/80">Privacy Policy</a>
-                                </span>
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="w-full h-12 text-base font-semibold shadow-lg shadow-primary/20"
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="terms"
+                                checked={agreed}
+                                onCheckedChange={(checked) => setAgreed(checked as boolean)}
+                            />
+                            <label
+                                htmlFor="terms"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground grid gap-1.5"
                             >
-                                Create Account
-                                <ArrowRight className="ml-2 w-5 h-5" />
-                            </Button>
-                        </form>
-
-                        <div className="relative my-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-border"></div>
-                            </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="px-4 bg-transparent text-muted-foreground bg-card/50">or continue with</span>
-                            </div>
+                                <span>I agree to the <a href="#" className="text-[#0066FF] hover:text-[#0066FF]/80 underline underline-offset-4">Terms of Service</a> and <a href="#" className="text-[#0066FF] hover:text-[#0066FF]/80 underline underline-offset-4">Privacy Policy</a></span>
+                            </label>
                         </div>
 
-                        <div className="space-y-3 relative z-10">
-                            <button type="button" onClick={() => handleGoogleLogin()} className="w-full py-3 px-4 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
-                                <svg className="w-5 h-5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z" fill="#4285F4" />
-                                    <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853" />
-                                    <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05" />
-                                    <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335" />
-                                </svg>
-                                Sign up with Google
-                            </button>
-                            <button type="button" onClick={handleGithubLogin} className="w-full py-3 px-4 bg-white hover:bg-gray-50 text-gray-900 font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200">
-                                <Github className="w-5 h-5" />
-                                Sign up with GitHub
-                            </button>
-                        </div>
+                        <Button className="w-full h-12 text-base shadow-lg shadow-blue-500/25 rounded-xl hover:scale-[1.02] transition-transform duration-200 bg-gradient-to-r from-[#0066FF] to-blue-600 hover:from-blue-600 hover:to-blue-700" type="submit" disabled={isLoading}>
+                            {isLoading ? (
+                                <span className="animate-pulse">Creating account...</span>
+                            ) : (
+                                <span className="flex items-center">
+                                    Create Account <ArrowRight className="ml-2 w-4 h-4" />
+                                </span>
+                            )}
+                        </Button>
+                    </form>
 
-                        <div className="mt-6 text-center text-sm text-muted-foreground">
-                            Already have an account? <Link to="/login" className="text-primary hover:text-primary/80 font-medium transition-colors">Sign in</Link>
+                    {/* Divider */}
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-muted" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
                         </div>
                     </div>
 
-                    <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground/80">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                        Secure SSL encrypted connection
+                    {/* Social Login */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <Button variant="outline" className="h-12 rounded-xl hover:bg-muted/50 transition-colors border-input/60" onClick={() => handleGoogleLogin()}>
+                            <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                                <path fill="#4285F4" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
+                            </svg>
+                            Google
+                        </Button>
+                        <Button variant="outline" className="h-12 rounded-xl hover:bg-muted/50 transition-colors border-input/60" onClick={handleGithubLogin}>
+                            <Github className="mr-2 h-4 w-4" />
+                            GitHub
+                        </Button>
                     </div>
+
+                    <div className="text-center text-sm text-muted-foreground">
+                        Already have an account?{" "}
+                        <Link to="/login" className="font-semibold text-[#0066FF] hover:text-[#0066FF]/80 transition-colors">
+                            Sign in
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="absolute bottom-6 left-0 w-full text-center text-xs text-muted-foreground/60 flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    Secure SSL encrypted connection
+                </div>
+            </div>
+
+            {/* Right Side - Visual Dashboard Mockup (Identical to Login for consistency) */}
+            <div className="hidden lg:flex flex-col relative bg-muted/10 overflow-hidden items-center justify-center p-8">
+                {/* Background Gradients */}
+                <div className="absolute inset-0 bg-[#0066FF]" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0066FF] to-blue-800 opacity-90" />
+                <div className="absolute top-[-20%] right-[-20%] w-[600px] h-[600px] bg-blue-400/20 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[-20%] left-[-20%] w-[600px] h-[600px] bg-indigo-400/20 rounded-full blur-[100px]" />
+
+                {/* Content Container */}
+                <div className="relative z-10 w-full max-w-xl">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="text-white mb-8 text-center"
+                    >
+                        <h2 className="text-3xl font-bold mb-3 drop-shadow-md">Track Your Progress</h2>
+                        <p className="text-white/90 text-lg drop-shadow-sm">Visualize your learning journey with advanced analytics.</p>
+                    </motion.div>
+
+                    {/* Dashboard Mockup - Glassmorphism */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, delay: 0.4, type: "spring" }}
+                        className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl shadow-blue-900/40 overflow-hidden p-6 text-white"
+                    >
+                        {/* Top Stats Row */}
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                            <div className="bg-white/10 rounded-xl p-4 border border-white/10 hover:bg-white/15 transition-colors">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="p-2 bg-blue-500/30 rounded-lg">
+                                        <Clock className="w-5 h-5 text-blue-100" />
+                                    </div>
+                                    <span className="text-sm font-medium text-white/80">Hours Studied</span>
+                                </div>
+                                <div className="text-2xl font-bold">24.5h</div>
+                                <div className="text-xs text-green-300 mt-1 flex items-center font-medium">
+                                    <TrendingUp className="w-3 h-3 mr-1" /> +12% from last week
+                                </div>
+                            </div>
+                            <div className="bg-white/10 rounded-xl p-4 border border-white/10 hover:bg-white/15 transition-colors">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="p-2 bg-purple-500/30 rounded-lg">
+                                        <CheckCircle2 className="w-5 h-5 text-purple-100" />
+                                    </div>
+                                    <span className="text-sm font-medium text-white/80">Tasks Done</span>
+                                </div>
+                                <div className="text-2xl font-bold">18/24</div>
+                                <div className="text-xs text-white/60 mt-1">
+                                    Keep up the good work!
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Chart Area */}
+                        <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-semibold text-white/90 flex items-center gap-2">
+                                    <BarChart3 className="w-4 h-4" /> Weekly Activity
+                                </h3>
+                                <div className="bg-white/10 text-[10px] px-2 py-1 rounded-full text-white/80 font-medium">Last 7 Days</div>
+                            </div>
+                            <div className="h-[180px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={MOCK_CHART_DATA}>
+                                        <defs>
+                                            <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#fff" stopOpacity={0.4} />
+                                                <stop offset="95%" stopColor="#fff" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '8px', color: '#fff' }}
+                                            itemStyle={{ color: '#fff' }}
+                                        />
+                                        <Area type="monotone" dataKey="hours" stroke="#fff" strokeWidth={2} fillOpacity={1} fill="url(#colorHours)" />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </div>
         </div>
     );
 }
+
