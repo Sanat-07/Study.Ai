@@ -8,6 +8,7 @@ type MindMapNode = Node<{
     color?: string;
     isRoot?: boolean;
     onAddChild?: (id: string) => void;
+    onLabelChange?: (id: string, label: string) => void;
     onCollapse?: (id: string, hidden: boolean) => void;
     collapsed?: boolean;
 }, 'mindMap'>;
@@ -16,6 +17,13 @@ const MindMapNode = ({ id, data, selected }: NodeProps<MindMapNode>) => {
     const [isEditing, setIsEditing] = useState(false);
     const [label, setLabel] = useState(data.label);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    // Sync local state with props when not editing
+    useEffect(() => {
+        if (!isEditing) {
+            setLabel(data.label);
+        }
+    }, [data.label, isEditing]);
 
     useEffect(() => {
         if (isEditing && inputRef.current) {
@@ -29,8 +37,9 @@ const MindMapNode = ({ id, data, selected }: NodeProps<MindMapNode>) => {
 
     const handleBlur = () => {
         setIsEditing(false);
-        // Here you would typically bubble up the change to the parent flow state
-        data.label = label;
+        if (label !== data.label) {
+            data.onLabelChange?.(id, label);
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {

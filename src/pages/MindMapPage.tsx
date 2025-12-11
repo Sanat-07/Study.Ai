@@ -67,14 +67,27 @@ const Flow = () => {
     const parentNode = nodes.find((n) => n.id === parentId);
     if (!parentNode) return;
 
+    // Find existing children to calculate offset
+    const existingChildren = edges.filter(e => e.source === parentId);
+    const childCount = existingChildren.length;
+
+    // Simple fan-out logic: 
+    // If it's the first child, place it to the right.
+    // Subsequent children get vertical offsets.
+    const baseOffset = 150;
+    const verticalSpacing = 100;
+    // Alternate up/down for subsequent nodes to balance the tree
+    const verticalOffset = childCount === 0 ? 0 :
+      (childCount % 2 === 1 ? 1 : -1) * Math.ceil(childCount / 2) * verticalSpacing;
+
     const newId = `${parentId}-${Date.now()}`;
     const newNode: Node = {
       id: newId,
       type: 'mindMap',
-      data: { label: 'New Node', color: parentNode.data.color }, // Inherit color
+      data: { label: 'New Node', color: parentNode.data.color }, // Inherit color for now
       position: {
-        x: parentNode.position.x + 100,
-        y: parentNode.position.y + 100,
+        x: parentNode.position.x + 250, // Always move right
+        y: parentNode.position.y + verticalOffset,
       },
     };
 
@@ -88,10 +101,21 @@ const Flow = () => {
 
     setNodes((nds) => nds.concat(newNode));
     setEdges((eds) => eds.concat(newEdge));
+  }, [nodes, edges, setNodes, setEdges]);
 
-    // Auto layout after adding to keep it tidy? Optional.
-    // onLayout('TB'); 
-  }, [nodes, setNodes, setEdges]);
+  const handleLabelChange = useCallback((id: string, newLabel: string) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === id) {
+          return {
+            ...node,
+            data: { ...node.data, label: newLabel },
+          };
+        }
+        return node;
+      })
+    );
+  }, [setNodes]);
 
   // Inject the onAddChild function into node data
   const nodesWithHandlers = useMemo(() => {
@@ -100,9 +124,10 @@ const Flow = () => {
       data: {
         ...node.data,
         onAddChild: onAddChild,
+        onLabelChange: handleLabelChange,
       },
     }));
-  }, [nodes, onAddChild]);
+  }, [nodes, onAddChild, handleLabelChange]);
 
   const handleColorChange = (color: string) => {
     if (!selectedNodeId) return;
@@ -117,7 +142,15 @@ const Flow = () => {
         return node;
       })
     );
-    // Also update edge colors connected to this node?
+    // Update connected edges color too for visual consistency?
+    setEdges((eds) =>
+      eds.map((edge) => {
+        if (edge.source === selectedNodeId) {
+          return { ...edge, style: { ...edge.style, stroke: color } };
+        }
+        return edge;
+      })
+    )
   };
 
   return (
@@ -153,6 +186,31 @@ const Flow = () => {
           >
             <Layout size={16} className="rotate-90" /> Flow
           </button>
+        </Panel>
+
+        {/* Legend Panel */}
+        <Panel position="bottom-left" className="m-4">
+          <div className="bg-[#111]/90 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-xl w-48">
+            <h4 className="text-xs font-bold uppercase text-gray-500 tracking-wider mb-3">Legend</h4>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                <span className="text-xs text-gray-300">Central Idea</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]"></div>
+                <span className="text-xs text-gray-300">Main Branch</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]"></div>
+                <span className="text-xs text-gray-300">Sub Topic</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></div>
+                <span className="text-xs text-gray-300">Note / Detail</span>
+              </div>
+            </div>
+          </div>
         </Panel>
       </ReactFlow>
 
